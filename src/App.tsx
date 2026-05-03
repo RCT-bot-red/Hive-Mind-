@@ -5,8 +5,11 @@ import Home from './pages/Home'
 import Feed from './pages/Feed'
 import Leaderboard from './pages/Leaderboard'
 import Profile from './pages/Profile'
+import PublicProfile from './pages/PublicProfile'
 import Auth from './pages/Auth'
 import Market from './pages/Market'
+import Admin from './pages/Admin'
+import Tournament from './pages/Tournament'
 import './App.css'
 
 function App() {
@@ -35,12 +38,14 @@ function App() {
             {user ? (
               <>
                 <Link to="/feed">Feed</Link>
+                <Link to="/tournament">Tournament</Link>
                 <Link to="/leaderboard">Leaderboard</Link>
                 <Link to="/profile">Profile</Link>
                 <button onClick={logout} className="btn-primary">Logout</button>
               </>
             ) : (
               <>
+                <Link to="/tournament">Tournament</Link>
                 <Link to="/auth">Login</Link>
                 <Link to="/auth" className="btn-primary">Sign Up</Link>
               </>
@@ -51,9 +56,12 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/feed" element={<Feed />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
+          <Route path="/tournament" element={<Tournament />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/profile/:username" element={<PublicProfile />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/market/:id" element={<Market />} />
+          <Route path="/admin" element={<Admin />} />
         </Routes>
       </div>
     </Router>
