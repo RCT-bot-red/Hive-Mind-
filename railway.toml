@@ -3,6 +3,6 @@ builder = "nixpacks"
 buildCommand = "npm ci && npm run build"
 
 [deploy]
-startCommand = "npx serve dist --single --listen tcp://0.0.0.0:$PORT"
+startCommand = "node_modules/.bin/serve dist --single --listen tcp://0.0.0.0:${PORT:-3000}"
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 3
