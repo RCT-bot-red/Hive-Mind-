@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { supabase } from "../utils/supabase";
 
 export default function Leaderboard() {
@@ -131,14 +132,17 @@ export default function Leaderboard() {
               const rank = getRankDisplay(index);
               const prize = getPrize(index);
               return (
-                <div key={user.id} style={{
+                <Link key={user.id} to={`/profile/${user.username}`} style={{ textDecoration: "none" }}>
+                <div style={{
                   background: index < 3 ? "linear-gradient(135deg, #0d1f35, #091525)" : "#0d1f35",
                   border: `1px solid ${index === 0 ? "#ffd700" : index === 1 ? "#c0c0c0" : index === 2 ? "#cd7f32" : "#1a3050"}`,
                   borderRadius: "14px",
                   padding: "18px 24px",
                   display: "flex",
                   alignItems: "center",
-                  gap: "16px"
+                  gap: "16px",
+                  cursor: "pointer",
+                  transition: "opacity 0.2s",
                 }}>
                   {/* Rank */}
                   <div style={{
@@ -199,6 +203,7 @@ export default function Leaderboard() {
                     <div style={{ fontSize: "11px", color: "#6b7f99" }}>accuracy</div>
                   </div>
                 </div>
+                </Link>
               );
             })}
           </div>
