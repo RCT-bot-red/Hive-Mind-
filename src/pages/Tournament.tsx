@@ -54,7 +54,14 @@ export default function Tournament() {
     // Check if current user is joined
     const { data: { user } } = await supabase.auth.getUser();
     if (user) {
-      const { data: u } = await supabase.from("users").select("id").eq("email", user.email).single();
+      // Upsert user record if not exists
+      let { data: u } = await supabase.from("users").select("id").eq("email", user.email).single();
+      if (!u) {
+        const { data: newU } = await supabase.from("users")
+          .upsert({ email: user.email, username: user.email.split("@")[0] }, { onConflict: "email" })
+          .select("id").single();
+        u = newU;
+      }
       setCurrentUser(u);
       if (u) {
         const { data: entry } = await supabase
@@ -71,9 +78,14 @@ export default function Tournament() {
   const handleJoin = async () => {
     if (!currentUser) { navigate("/auth"); return; }
     setJoining(true);
-    await supabase.from("tournament_entries").upsert({ user_id: currentUser.id }, { onConflict: "user_id" });
-    setIsJoined(true);
-    setParticipants(p => p + 1);
+    const { error } = await supabase.from("tournament_entries")
+      .upsert({ user_id: currentUser.id }, { onConflict: "user_id" });
+    if (!error) {
+      setIsJoined(true);
+      setParticipants(p => p + 1);
+    } else {
+      console.error("Join error:", error);
+    }
     setJoining(false);
   };
 
