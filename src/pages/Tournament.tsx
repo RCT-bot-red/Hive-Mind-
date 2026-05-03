@@ -78,9 +78,10 @@ export default function Tournament() {
   const handleJoin = async () => {
     if (!currentUser) { navigate("/auth"); return; }
     setJoining(true);
+    // Try insert, ignore if already exists
     const { error } = await supabase.from("tournament_entries")
-      .upsert({ user_id: currentUser.id }, { onConflict: "user_id" });
-    if (!error) {
+      .insert({ user_id: currentUser.id });
+    if (!error || error.code === "23505") {
       setIsJoined(true);
       setParticipants(p => p + 1);
     } else {
