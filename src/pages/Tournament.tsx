@@ -11,6 +11,7 @@ export default function Tournament() {
   const [joining, setJoining] = useState(false);
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [loading, setLoading] = useState(true);
+  const [tournamentId, setTournamentId] = useState<string | null>(null);
 
   // Tournament ends last day of May 2026
   const TOURNAMENT_END = new Date("2026-06-01T00:00:00Z");
@@ -36,10 +37,29 @@ export default function Tournament() {
   const fetchData = async () => {
     setLoading(true);
 
+    // Get or create the May 2026 tournament
+    let { data: tournament } = await supabase
+      .from("tournaments")
+      .select("id")
+      .eq("name", "May 2026 Tournament")
+      .single();
+    
+    if (!tournament) {
+      const { data: newT } = await supabase
+        .from("tournaments")
+        .insert({ name: "May 2026 Tournament", start_date: "2026-05-01", end_date: "2026-06-01", prize_pool: 500, status: "active" })
+        .select("id")
+        .single();
+      tournament = newT;
+    }
+    
+    if (tournament) setTournamentId(tournament.id);
+
     // Participants count
     const { count } = await supabase
       .from("tournament_entries")
-      .select("*", { count: "exact", head: true });
+      .select("*", { count: "exact", head: true })
+      .eq("tournament_id", tournament?.id || "");
     setParticipants(count || 0);
 
     // Top forecasters (leaderboard for this month)
@@ -68,6 +88,7 @@ export default function Tournament() {
           .from("tournament_entries")
           .select("id")
           .eq("user_id", u.id)
+          .eq("tournament_id", tournament?.id || "")
           .single();
         setIsJoined(!!entry);
       }
@@ -78,9 +99,9 @@ export default function Tournament() {
   const handleJoin = async () => {
     if (!currentUser) { navigate("/auth"); return; }
     setJoining(true);
-    // Try insert, ignore if already exists
+    // Try insert with tournament_id
     const { error } = await supabase.from("tournament_entries")
-      .insert({ user_id: currentUser.id });
+      .insert({ user_id: currentUser.id, tournament_id: tournamentId });
     if (!error || error.code === "23505") {
       setIsJoined(true);
       setParticipants(p => p + 1);
