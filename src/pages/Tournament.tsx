@@ -88,7 +88,6 @@ export default function Tournament() {
           .from("tournament_entries")
           .select("id")
           .eq("user_id", u.id)
-          .eq("tournament_id", tournament?.id || "")
           .single();
         setIsJoined(!!entry);
       }
