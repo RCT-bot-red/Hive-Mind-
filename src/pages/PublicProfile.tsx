@@ -9,6 +9,10 @@ export default function PublicProfile() {
   const [predictions, setPredictions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState("open");
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [followersCount, setFollowersCount] = useState(0);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [followLoading, setFollowLoading] = useState(false);
 
   useEffect(() => { fetchProfile(); }, [username]);
 
@@ -19,7 +23,36 @@ export default function PublicProfile() {
     setUser(userData);
     const { data: preds } = await supabase.from("predictions").select("*").eq("user_id", userData.id).order("created_at", { ascending: false });
     setPredictions(preds || []);
+    setFollowersCount(userData.followers_count || 0);
+
+    // Check if current user follows this profile
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      const { data: cu } = await supabase.from("users").select("id").eq("email", user.email).single();
+      if (cu) {
+        setCurrentUserId(cu.id);
+        const { data: followData } = await supabase.from("follows").select("id").eq("follower_id", cu.id).eq("following_id", userData.id).single();
+        setIsFollowing(!!followData);
+      }
+    }
     setLoading(false);
+  };
+
+  const handleFollow = async () => {
+    if (!currentUserId) return;
+    setFollowLoading(true);
+    if (isFollowing) {
+      await supabase.from("follows").delete().eq("follower_id", currentUserId).eq("following_id", user.id);
+      await supabase.from("users").update({ followers_count: Math.max(0, followersCount - 1) }).eq("id", user.id);
+      setIsFollowing(false);
+      setFollowersCount(p => Math.max(0, p - 1));
+    } else {
+      await supabase.from("follows").insert({ follower_id: currentUserId, following_id: user.id });
+      await supabase.from("users").update({ followers_count: followersCount + 1 }).eq("id", user.id);
+      setIsFollowing(true);
+      setFollowersCount(p => p + 1);
+    }
+    setFollowLoading(false);
   };
 
   const open = predictions.filter(p => p.status === "open");
@@ -41,9 +74,18 @@ export default function PublicProfile() {
             <div style={{ width: "72px", height: "72px", borderRadius: "50%", background: "linear-gradient(135deg, #00B4D8, #0077B6)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "28px", fontWeight: 900, color: "#fff" }}>
               {user.username?.[0]?.toUpperCase()}
             </div>
-            <div>
-              <h1 style={{ fontSize: "26px", fontWeight: 900, margin: 0 }}>{user.username}</h1>
-              <p style={{ color: "#6b7f99", margin: 0, fontSize: "14px" }}>Joined {new Date(user.created_at).toLocaleDateString("en-US", { month: "long", year: "numeric" })}</p>
+            <div style={{ flex: 1 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap" }}>
+                <h1 style={{ fontSize: "26px", fontWeight: 900, margin: 0 }}>{user.username}</h1>
+                {currentUserId && currentUserId !== user.id && (
+                  <button onClick={handleFollow} disabled={followLoading} style={{ background: isFollowing ? "#0d1f35" : "#00B4D8", border: isFollowing ? "1px solid #1a3050" : "none", color: isFollowing ? "#8899aa" : "#000", padding: "8px 20px", borderRadius: "20px", fontSize: "13px", fontWeight: 700, cursor: "pointer" }}>
+                    {followLoading ? "..." : isFollowing ? "Following" : "+ Follow"}
+                  </button>
+                )}
+              </div>
+              <p style={{ color: "#6b7f99", margin: "4px 0 0", fontSize: "14px" }}>
+                <span style={{ color: "#ffffff", fontWeight: 700 }}>{followersCount}</span> followers · Joined {new Date(user.created_at).toLocaleDateString("en-US", { month: "long", year: "numeric" })}
+              </p>
             </div>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "12px" }}>
