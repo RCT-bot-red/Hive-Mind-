@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "../utils/supabase";
 
@@ -28,6 +28,22 @@ export default function Home() {
     setStats({ users: users || 0, predictions: predictions || 0, votes: votes || 0 });
     setTopPredictions(topPreds || []);
   };
+
+  // Scroll animation hook
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
+    );
+    document.querySelectorAll(".fade-up").forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, [topPredictions]);
 
   const categoryColors: Record<string, string> = {
     Politics: "#ff6b6b", Technology: "#00B4D8", Economics: "#00ff88",
@@ -77,7 +93,7 @@ export default function Home() {
         </div>
 
         {/* LIVE STATS */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "16px", maxWidth: "600px", margin: "0 auto 80px" }}>
+        <div className="fade-up" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "16px", maxWidth: "600px", margin: "0 auto 80px" }}>
           {[
             { value: stats.predictions, label: "Predictions", suffix: "+" },
             { value: stats.votes, label: "Votes Cast", suffix: "+" },
@@ -94,7 +110,7 @@ export default function Home() {
       </div>
 
       {/* TOURNAMENT BANNER */}
-      <div style={{ maxWidth: "900px", margin: "0 auto 80px", padding: "0 24px" }}>
+      <div className="fade-up" style={{ maxWidth: "900px", margin: "0 auto 80px", padding: "0 24px" }}>
         <div style={{ background: "linear-gradient(135deg, #0d1f35, #091828)", border: "1px solid #1a3a5c", borderTop: "3px solid #00B4D8", borderRadius: "20px", padding: "32px 40px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "24px" }}>
           <div>
             <div style={{ fontSize: "12px", color: "#00B4D8", fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", marginBottom: "8px" }}>🏆 May 2026 Tournament</div>
@@ -122,7 +138,7 @@ export default function Home() {
       </div>
 
       {/* LIVE PREDICTIONS */}
-      <div style={{ maxWidth: "900px", margin: "0 auto 80px", padding: "0 24px" }}>
+      <div className="fade-up" style={{ maxWidth: "900px", margin: "0 auto 80px", padding: "0 24px" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
           <h2 style={{ fontSize: "24px", fontWeight: 900, margin: 0 }}>Live Predictions</h2>
           <Link to="/feed" style={{ color: "#00B4D8", fontSize: "14px", fontWeight: 700, textDecoration: "none" }}>See all →</Link>
@@ -153,7 +169,7 @@ export default function Home() {
       </div>
 
       {/* HOW IT WORKS */}
-      <div style={{ maxWidth: "900px", margin: "0 auto 80px", padding: "0 24px" }}>
+      <div className="fade-up" style={{ maxWidth: "900px", margin: "0 auto 80px", padding: "0 24px" }}>
         <h2 style={{ fontSize: "24px", fontWeight: 900, textAlign: "center", marginBottom: "40px" }}>How HiveMind works</h2>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "20px" }}>
           {[
@@ -180,7 +196,7 @@ export default function Home() {
       </div>
 
       {/* FINAL CTA */}
-      <div style={{ textAlign: "center", padding: "60px 24px 100px" }}>
+      <div className="fade-up" style={{ textAlign: "center", padding: "60px 24px 100px" }}>
         <div style={{ background: "linear-gradient(135deg, #0d1f35, #091525)", border: "1px solid #1a3a5c", borderRadius: "24px", padding: "60px 40px", maxWidth: "600px", margin: "0 auto" }}>
           <div style={{ marginBottom: "16px", color: "#00B4D8" }}><svg width="48" height="48" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
           <h2 style={{ fontSize: "32px", fontWeight: 900, marginBottom: "16px", lineHeight: 1.2 }}>Ready to prove you can predict the future?</h2>
