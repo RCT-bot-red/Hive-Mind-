@@ -31,7 +31,7 @@ function App() {
       <div style={{ backgroundColor: '#0a1628', minHeight: '100vh' }}>
         <nav className="navbar">
           <Link to="/" className="navbar-logo" style={{ display: "flex", alignItems: "center", gap: "10px", textDecoration: "none" }}>
-            <svg width="34" height="34" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg width="44" height="44" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
               <polygon points="80,4 148,42 148,118 80,156 12,118 12,42" fill="none" stroke="#1a3a5c" strokeWidth="2"/>
               <polygon points="80,22 130,50 130,110 80,138 30,110 30,50" fill="none" stroke="#00B4D8" strokeWidth="2.5"/>
               <polygon points="80,44 108,60 108,100 80,116 52,100 52,60" fill="#00B4D8" fillOpacity="0.12" stroke="#00B4D8" strokeWidth="2"/>
