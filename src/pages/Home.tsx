@@ -170,26 +170,27 @@ export default function Home() {
 
       {/* HOW IT WORKS */}
       <div className="fade-up" style={{ maxWidth: "900px", margin: "0 auto 80px", padding: "0 24px" }}>
-        <h2 style={{ fontSize: "24px", fontWeight: 900, textAlign: "center", marginBottom: "40px" }}>How HiveMind works</h2>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "20px" }}>
-          {[
-            { step: "01", icon: "target", title: "Make a Prediction", desc: "Post your forecast with a confidence level from 1-99%. Be bold — vague predictions don't count." },
-            { step: "02", icon: "users", title: "Community Votes", desc: "Other forecasters vote agree or disagree, moving the community consensus in real time." },
-            { step: "03", icon: "check", title: "Predictions Resolve", desc: "When the event happens, predictions are marked correct or incorrect. Your accuracy score updates automatically." },
-            { step: "04", icon: "trophy", title: "Climb the Leaderboard", desc: "Build your reputation as a top forecaster. Compete in monthly tournaments for real prizes." },
-          ].map(s => (
-            <div key={s.step} style={{ background: "#0d1f35", border: "1px solid #1a3050", borderRadius: "16px", padding: "28px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "16px" }}>
-                <span style={{ fontSize: "11px", color: "#00B4D8", fontWeight: 900, letterSpacing: "1px" }}>{s.step}</span>
-                <span style={{ color: "#00B4D8" }}>
-                  {s.icon === "target" && <svg width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>}
-                  {s.icon === "users" && <svg width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>}
-                  {s.icon === "check" && <svg width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>}
-                  {s.icon === "trophy" && <svg width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><polyline points="8 21 12 17 16 21"/><line x1="12" y1="17" x2="12" y2="11"/><path d="M7 4H4a2 2 0 0 0-2 2v2c0 3.31 2.69 6 6 6h8c3.31 0 6-2.69 6-6V6a2 2 0 0 0-2-2h-3"/><rect x="7" y="2" width="10" height="9" rx="2"/></svg>}
-                </span>
+        <div style={{ textAlign: "center", marginBottom: "52px" }}>
+          <h2 style={{ fontSize: "28px", fontWeight: 900, margin: "0 0 10px" }}>How HiveMind works</h2>
+          <p style={{ color: "#6b7f99", fontSize: "15px", margin: 0 }}>Four steps to becoming a top forecaster</p>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "0", position: "relative" }}>
+          <div style={{ position: "absolute", top: "36px", left: "calc(12.5%)", right: "calc(12.5%)", height: "1px", background: "linear-gradient(90deg, #00B4D8, #7dd3fc, #4ade80, #00ff88)", opacity: 0.25, zIndex: 0 }}/>
+          {([
+            { n: 1, color: "#00B4D8", title: "Predict", desc: "Post a bold forecast with your confidence level 1–99%.", svg: <svg width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> },
+            { n: 2, color: "#7dd3fc", title: "Vote", desc: "Community votes move the consensus probability in real time.", svg: <svg width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> },
+            { n: 3, color: "#4ade80", title: "Resolve", desc: "Events resolve and your accuracy score updates automatically.", svg: <svg width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> },
+            { n: 4, color: "#00ff88", title: "Win", desc: "Top forecasters win monthly prizes and global recognition.", svg: <svg width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><polyline points="8 21 12 17 16 21"/><line x1="12" y1="17" x2="12" y2="11"/><path d="M7 4H4a2 2 0 0 0-2 2v2c0 3.31 2.69 6 6 6h8c3.31 0 6-2.69 6-6V6a2 2 0 0 0-2-2h-3"/><rect x="7" y="2" width="10" height="9" rx="2"/></svg> },
+          ] as const).map(s => (
+            <div key={s.n} style={{ padding: "0 12px", textAlign: "center", position: "relative", zIndex: 1 }}>
+              <div style={{ width: "72px", height: "72px", borderRadius: "50%", background: `${s.color}12`, border: `1.5px solid ${s.color}35`, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 20px", color: s.color, position: "relative" }}>
+                {s.svg}
+                <div style={{ position: "absolute", top: "-8px", right: "-8px", width: "22px", height: "22px", borderRadius: "50%", background: "#0a1628", border: `1.5px solid ${s.color}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "10px", fontWeight: 900, color: s.color }}>
+                  {s.n}
+                </div>
               </div>
-              <div style={{ fontSize: "17px", fontWeight: 700, marginBottom: "10px" }}>{s.title}</div>
-              <div style={{ color: "#6b7f99", fontSize: "14px", lineHeight: 1.7 }}>{s.desc}</div>
+              <div style={{ fontSize: "15px", fontWeight: 700, marginBottom: "8px", color: "#ffffff" }}>{s.title}</div>
+              <div style={{ color: "#6b7f99", fontSize: "13px", lineHeight: 1.6 }}>{s.desc}</div>
             </div>
           ))}
         </div>
