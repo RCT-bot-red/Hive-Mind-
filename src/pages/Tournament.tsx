@@ -111,16 +111,16 @@ export default function Tournament() {
   };
 
   const prizes = [
-    { place: "1st", pct: 50, icon: "🥇", color: "#ffd700", bg: "#ffd70015", border: "#ffd70040" },
-    { place: "2nd", pct: 20, icon: "🥈", color: "#c0c0c0", bg: "#c0c0c015", border: "#c0c0c040" },
-    { place: "3rd", pct: 10, icon: "🥉", color: "#cd7f32", bg: "#cd7f3215", border: "#cd7f3240" },
+    { place: "1st", pct: 50, icon: "1", color: "#ffd700", bg: "#ffd70015", border: "#ffd70040" },
+    { place: "2nd", pct: 20, icon: "2", color: "#c0c0c0", bg: "#c0c0c015", border: "#c0c0c040" },
+    { place: "3rd", pct: 10, icon: "3", color: "#cd7f32", bg: "#cd7f3215", border: "#cd7f3240" },
   ];
 
   const getRank = (i: number) => {
-    if (i === 0) return { symbol: "🥇", color: "#ffd700" };
-    if (i === 1) return { symbol: "🥈", color: "#c0c0c0" };
-    if (i === 2) return { symbol: "🥉", color: "#cd7f32" };
-    return { symbol: `#${i + 1}`, color: "#6b7f99" };
+    if (i === 0) return { symbol: "1", color: "#ffd700" };
+    if (i === 1) return { symbol: "2", color: "#c0c0c0" };
+    if (i === 2) return { symbol: "3", color: "#cd7f32" };
+    return { symbol: `${i + 1}`, color: "#6b7f99" };
   };
 
   return (
@@ -184,7 +184,7 @@ export default function Tournament() {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "12px", marginBottom: "24px" }}>
           {prizes.map(p => (
             <div key={p.place} style={{ background: p.bg, border: `1px solid ${p.border}`, borderRadius: "14px", padding: "20px", textAlign: "center" }}>
-              <div style={{ fontSize: "32px", marginBottom: "8px" }}>{p.icon}</div>
+              <div style={{ width:"40px",height:"40px",borderRadius:"50%",background:p.bg,border:`1px solid ${p.border}`,display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 12px",fontSize:"18px",fontWeight:900,color:p.color }}>{p.icon}</div>
               <div style={{ fontSize: "13px", color: p.color, fontWeight: 700, marginBottom: "4px" }}>{p.place} Place</div>
               <div style={{ fontSize: "24px", fontWeight: 900, color: p.color }}>${Math.round(PRIZE_POOL * p.pct / 100)}</div>
               <div style={{ fontSize: "12px", color: "#6b7f99", marginTop: "2px" }}>{p.pct}% of pool</div>
@@ -204,7 +204,7 @@ export default function Tournament() {
               disabled={joining}
               style={{ background: "#00B4D8", border: "none", color: "#000", padding: "16px 48px", borderRadius: "12px", fontSize: "16px", fontWeight: 900, cursor: "pointer", opacity: joining ? 0.7 : 1 }}
             >
-              {joining ? "Joining..." : "🏆 Join Tournament — Free"}
+              {joining ? "Joining..." : "Join Tournament — Free"}
             </button>
           )}
           <p style={{ color: "#6b7f99", fontSize: "13px", marginTop: "12px" }}>
@@ -242,7 +242,7 @@ export default function Tournament() {
                       transition: "border-color 0.2s",
                     }}>
                       {/* Rank */}
-                      <div style={{ minWidth: "40px", textAlign: "center", fontSize: i < 3 ? "24px" : "15px", fontWeight: 900, color: rank.color }}>
+                      <div style={{ minWidth:"40px",height:"40px",borderRadius:"50%",background:i<3?"rgba(255,255,255,0.05)":"transparent",border:`1px solid ${rank.color}30`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"15px",fontWeight:900,color:rank.color,flexShrink:0 }}>
                         {rank.symbol}
                       </div>
 
@@ -255,7 +255,7 @@ export default function Tournament() {
                       <div style={{ flex: 1 }}>
                         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                           <span style={{ fontSize: "15px", fontWeight: 700, color: "#fff" }}>{user.username}</span>
-                          {i === 0 && <span style={{ background: "#ffd70020", border: "1px solid #ffd700", color: "#ffd700", fontSize: "10px", fontWeight: 700, padding: "2px 8px", borderRadius: "8px" }}>👑 LEADER</span>}
+                          {i === 0 && <span style={{ background: "#ffd70020", border: "1px solid #ffd700", color: "#ffd700", fontSize: "10px", fontWeight: 700, padding: "2px 8px", borderRadius: "8px" }}>LEADER</span>}
                         </div>
                         <div style={{ fontSize: "12px", color: "#6b7f99", marginTop: "2px" }}>
                           {user.resolved_predictions || 0} resolved · {user.total_predictions || 0} total

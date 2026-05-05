@@ -31,9 +31,9 @@ export default function Leaderboard() {
   };
 
   const getRankDisplay = (index: number) => {
-    if (index === 0) return { symbol: "🥇", color: "#ffd700" };
-    if (index === 1) return { symbol: "🥈", color: "#c0c0c0" };
-    if (index === 2) return { symbol: "🥉", color: "#cd7f32" };
+    if (index === 0) return { symbol: "1", color: "#ffd700" };
+    if (index === 1) return { symbol: "2", color: "#c0c0c0" };
+    if (index === 2) return { symbol: "3", color: "#cd7f32" };
     return { symbol: `#${index + 1}`, color: "#6b7f99" };
   };
 
@@ -72,9 +72,9 @@ export default function Leaderboard() {
           textAlign: "center"
         }}>
           {[
-            { place: "1st Place", prize: "50% of pool", icon: "🥇", color: "#ffd700" },
-            { place: "2nd Place", prize: "20% of pool", icon: "🥈", color: "#c0c0c0" },
-            { place: "3rd Place", prize: "10% of pool", icon: "🥉", color: "#cd7f32" }
+            { place: "1st Place", prize: "50% of pool", icon: "1", color: "#ffd700" },
+            { place: "2nd Place", prize: "20% of pool", icon: "2", color: "#c0c0c0" },
+            { place: "3rd Place", prize: "10% of pool", icon: "3", color: "#cd7f32" }
           ].map((p) => (
             <div key={p.place}>
               <div style={{ fontSize: "28px", marginBottom: "4px" }}>{p.icon}</div>

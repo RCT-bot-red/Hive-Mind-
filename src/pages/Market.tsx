@@ -181,7 +181,7 @@ return(
 <div style={{fontSize:'12px',color:'#6b7f99',textAlign:'center'}}>Community average: <span style={{color:'#00B4D8',fontWeight:700}}>{communityProb}% YES</span></div>
 </div>
 <button onClick={()=>{const text=`I think there's a ${myVote}% chance: "${pred?.question}" — HiveMind prediction market`;window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(window.location.href)}`, '_blank')}} style={{marginTop:'12px',width:'100%',padding:'12px',background:'#1DA1F220',border:'1px solid #1DA1F240',borderRadius:'10px',color:'#1DA1F2',fontSize:'13px',fontWeight:700,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:'8px'}}>
-  <span>🐦</span> Share on Twitter
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style={{marginRight:"6px"}}><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg> Share on X
 </button>
 <div style={{display:'none'}}>
 </div>

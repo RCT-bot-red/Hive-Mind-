@@ -41,7 +41,7 @@ export default function Home() {
       {/* HERO */}
       <div style={{ textAlign: "center", padding: "90px 24px 60px", maxWidth: "900px", margin: "0 auto" }}>
         <div style={{ display: "inline-flex", alignItems: "center", gap: "8px", background: "#00B4D815", border: "1px solid #00B4D840", color: "#00B4D8", padding: "6px 16px", borderRadius: "20px", fontSize: "12px", fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", marginBottom: "28px" }}>
-          <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#00ff88", display: "inline-block", animation: "pulse 2s infinite" }}></span>
+          <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#00ff88", display: "inline-block" }}></span>
           Live — May 2026 Tournament Active
         </div>
 
@@ -157,15 +157,20 @@ export default function Home() {
         <h2 style={{ fontSize: "24px", fontWeight: 900, textAlign: "center", marginBottom: "40px" }}>How HiveMind works</h2>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "20px" }}>
           {[
-            { step: "01", icon: "🎯", title: "Make a Prediction", desc: "Post your forecast with a confidence level from 1-99%. Be bold — vague predictions don't count." },
-            { step: "02", icon: "🗳️", title: "Community Votes", desc: "Other forecasters vote agree or disagree, moving the community consensus in real time." },
-            { step: "03", icon: "✅", title: "Predictions Resolve", desc: "When the event happens, predictions are marked correct or incorrect. Your accuracy score updates automatically." },
-            { step: "04", icon: "🏆", title: "Climb the Leaderboard", desc: "Build your reputation as a top forecaster. Compete in monthly tournaments for real prizes." },
+            { step: "01", icon: "target", title: "Make a Prediction", desc: "Post your forecast with a confidence level from 1-99%. Be bold — vague predictions don't count." },
+            { step: "02", icon: "users", title: "Community Votes", desc: "Other forecasters vote agree or disagree, moving the community consensus in real time." },
+            { step: "03", icon: "check", title: "Predictions Resolve", desc: "When the event happens, predictions are marked correct or incorrect. Your accuracy score updates automatically." },
+            { step: "04", icon: "trophy", title: "Climb the Leaderboard", desc: "Build your reputation as a top forecaster. Compete in monthly tournaments for real prizes." },
           ].map(s => (
             <div key={s.step} style={{ background: "#0d1f35", border: "1px solid #1a3050", borderRadius: "16px", padding: "28px" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "16px" }}>
                 <span style={{ fontSize: "11px", color: "#00B4D8", fontWeight: 900, letterSpacing: "1px" }}>{s.step}</span>
-                <span style={{ fontSize: "24px" }}>{s.icon}</span>
+                <span style={{ color: "#00B4D8" }}>
+                  {s.icon === "target" && <svg width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>}
+                  {s.icon === "users" && <svg width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>}
+                  {s.icon === "check" && <svg width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>}
+                  {s.icon === "trophy" && <svg width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><polyline points="8 21 12 17 16 21"/><line x1="12" y1="17" x2="12" y2="11"/><path d="M7 4H4a2 2 0 0 0-2 2v2c0 3.31 2.69 6 6 6h8c3.31 0 6-2.69 6-6V6a2 2 0 0 0-2-2h-3"/><rect x="7" y="2" width="10" height="9" rx="2"/></svg>}
+                </span>
               </div>
               <div style={{ fontSize: "17px", fontWeight: 700, marginBottom: "10px" }}>{s.title}</div>
               <div style={{ color: "#6b7f99", fontSize: "14px", lineHeight: 1.7 }}>{s.desc}</div>
@@ -177,7 +182,7 @@ export default function Home() {
       {/* FINAL CTA */}
       <div style={{ textAlign: "center", padding: "60px 24px 100px" }}>
         <div style={{ background: "linear-gradient(135deg, #0d1f35, #091525)", border: "1px solid #1a3a5c", borderRadius: "24px", padding: "60px 40px", maxWidth: "600px", margin: "0 auto" }}>
-          <div style={{ fontSize: "40px", marginBottom: "16px" }}>🐝</div>
+          <div style={{ marginBottom: "16px", color: "#00B4D8" }}><svg width="48" height="48" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
           <h2 style={{ fontSize: "32px", fontWeight: 900, marginBottom: "16px", lineHeight: 1.2 }}>Ready to prove you can predict the future?</h2>
           <p style={{ color: "#6b7f99", fontSize: "16px", marginBottom: "32px", lineHeight: 1.6 }}>Join the HiveMind community. Make predictions, build your track record, and compete for $500.</p>
           {!user ? (
