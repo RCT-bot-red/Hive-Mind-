@@ -50,7 +50,7 @@ function App() {
               <circle cx="80" cy="78" r="10" fill="#00B4D8"/>
               <circle cx="80" cy="78" r="5" fill="white"/>
             </svg>
-            <span style={{ fontSize: "20px", fontWeight: 900, color: "#ffffff", letterSpacing: "-0.5px" }}>HiveMind</span>
+            <span style={{ fontSize: "26px", fontWeight: 900, color: "#ffffff", letterSpacing: "-0.5px" }}>HiveMind</span>
           </Link>
           <div className="navbar-links">
             {user ? (
