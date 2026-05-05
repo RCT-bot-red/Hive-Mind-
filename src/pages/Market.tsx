@@ -13,6 +13,7 @@ const[communityProb,setCommunityProb]=useState(50)
 const[loading,setLoading]=useState(true)
 const[currentUser,setCurrentUser]=useState<any>(null)
 const[timeLeft,setTimeLeft]=useState({days:0,hours:0,minutes:0,seconds:0})
+const[chartData,setChartData]=useState<{time:string,prob:number}[]>([])
 
 useEffect(()=>{fetchData()},[id])
 
@@ -31,6 +32,19 @@ if(user){
 const{data:u}=await supabase.from('users').select('id').eq('email',user.email).single()
 setCurrentUser(u)
 if(u){const existing=votesData?.find((v:any)=>v.user_id===u.id);if(existing){setMyVote(existing.probability);setSubmitted(true)}}
+}
+// Build chart data from votes timeline
+if(votesData && votesData.length > 0) {
+  const sorted = [...votesData].sort((a:any,b:any) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
+  const points: {time:string,prob:number}[] = []
+  let running = 0
+  sorted.forEach((v:any, i:number) => {
+    running = Math.round(sorted.slice(0,i+1).reduce((s:number,x:any)=>s+x.probability,0)/(i+1))
+    points.push({time: new Date(v.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric'}), prob: running})
+  })
+  // Add current point
+  if(predData) points.unshift({time: new Date(predData.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric'}), prob: predData.confidence})
+  setChartData(points)
 }
 setLoading(false)
 }
@@ -54,6 +68,50 @@ await supabase.from('votes').insert({prediction_id:id,user_id:currentUser.id,pro
 setSubmitted(true)
 const newAvg=Math.round([...votes.filter((v:any)=>v.user_id!==currentUser.id),{probability:myVote}].reduce((s,v)=>s+v.probability,0)/([...votes.filter((v:any)=>v.user_id!==currentUser.id),{probability:myVote}].length))
 setCommunityProb(newAvg)
+}
+
+// SVG Line Chart Component
+const ProbChart = ({data}:{data:{time:string,prob:number}[]}) => {
+  if(data.length < 2) return null
+  const w = 500, h = 140, pad = {top:20,right:20,bottom:30,left:40}
+  const iw = w - pad.left - pad.right
+  const ih = h - pad.top - pad.bottom
+  const minP = Math.max(0, Math.min(...data.map(d=>d.prob)) - 10)
+  const maxP = Math.min(100, Math.max(...data.map(d=>d.prob)) + 10)
+  const xScale = (i:number) => pad.left + (i / (data.length-1)) * iw
+  const yScale = (p:number) => pad.top + ih - ((p - minP) / (maxP - minP)) * ih
+  const points = data.map((d,i) => `${xScale(i)},${yScale(d.prob)}`).join(' ')
+  const areaPoints = `${pad.left},${pad.top+ih} ${points} ${xScale(data.length-1)},${pad.top+ih}`
+  const lastProb = data[data.length-1].prob
+  const color = lastProb >= 60 ? '#00ff88' : lastProb >= 40 ? '#00B4D8' : '#ff4444'
+  return (
+    <div style={{background:'#0d1f35',border:'1px solid #1a3050',borderRadius:'16px',padding:'20px',marginBottom:'20px'}}>
+      <div style={{fontSize:'13px',color:'#6b7f99',fontWeight:700,textTransform:'uppercase',letterSpacing:'1.5px',marginBottom:'12px'}}>Probability Over Time</div>
+      <svg width="100%" viewBox={`0 0 ${w} ${h}`}>
+        {/* Grid lines */}
+        {[25,50,75].map(p => (
+          <g key={p}>
+            <line x1={pad.left} y1={yScale(p)} x2={w-pad.right} y2={yScale(p)} stroke="#1a3050" strokeWidth="1" strokeDasharray="4"/>
+            <text x={pad.left-6} y={yScale(p)+4} fill="#3a5070" fontSize="10" textAnchor="end">{p}%</text>
+          </g>
+        ))}
+        {/* Area fill */}
+        <polygon points={areaPoints} fill={color} opacity="0.08"/>
+        {/* Line */}
+        <polyline points={points} fill="none" stroke={color} strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round"/>
+        {/* Data points */}
+        {data.map((d,i) => (
+          <circle key={i} cx={xScale(i)} cy={yScale(d.prob)} r="4" fill={color} stroke="#0d1f35" strokeWidth="2"/>
+        ))}
+        {/* Last value label */}
+        <text x={xScale(data.length-1)+8} y={yScale(lastProb)+4} fill={color} fontSize="12" fontWeight="700">{lastProb}%</text>
+        {/* X axis labels */}
+        {data.filter((_,i) => i === 0 || i === data.length-1).map((d,_,arr) => (
+          <text key={d.time} x={d === arr[0] ? pad.left : xScale(data.length-1)} y={h-8} fill="#3a5070" fontSize="10" textAnchor={d === arr[0] ? "start" : "end"}>{d.time}</text>
+        ))}
+      </svg>
+    </div>
+  )
 }
 
 if(loading)return<div style={{backgroundColor:'#0a1628',minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',color:'#6b7f99'}}>Loading...</div>
@@ -117,6 +175,7 @@ return(
 </div>
 
 {/* Countdown */}
+<ProbChart data={chartData}/>
 <div style={{background:'#0d1f35',border:'1px solid #1a3050',borderRadius:'16px',padding:'24px'}}>
 <div style={{fontSize:'13px',color:'#6b7f99',fontWeight:700,textTransform:'uppercase',letterSpacing:'1.5px',marginBottom:'16px'}}>Time Remaining</div>
 <div style={{display:'flex',gap:'16px'}}>
