@@ -175,10 +175,12 @@ export default function Home() {
           <p style={{ color: "#6b7f99", fontSize: "15px", margin: 0 }}>Four steps to becoming a top forecaster</p>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "0", position: "relative" }}>
-          {/* Connector segments between circles - stops at circle edges */}
-          <div style={{ position: "absolute", top: "36px", left: "calc(25% - 4px)", width: "calc(25% + 8px)", height: "1px", background: "linear-gradient(90deg, #00B4D8, #7dd3fc)", opacity: 0.35, zIndex: 0 }}/>
-          <div style={{ position: "absolute", top: "36px", left: "calc(50% - 4px)", width: "calc(25% + 8px)", height: "1px", background: "linear-gradient(90deg, #7dd3fc, #4ade80)", opacity: 0.35, zIndex: 0 }}/>
-          <div style={{ position: "absolute", top: "36px", left: "calc(75% - 4px)", width: "calc(25%)", height: "1px", background: "linear-gradient(90deg, #4ade80, #00ff88)", opacity: 0.35, zIndex: 0 }}/>
+          {/* Connector 1→2 */}
+          <div style={{ position: "absolute", top: "35px", left: "calc(12.5% + 36px)", right: "calc(62.5% + 36px)", height: "1px", background: "linear-gradient(90deg, #00B4D8, #7dd3fc)", opacity: 0.4, zIndex: 0 }}/>
+          {/* Connector 2→3 */}
+          <div style={{ position: "absolute", top: "35px", left: "calc(37.5% + 36px)", right: "calc(37.5% + 36px)", height: "1px", background: "linear-gradient(90deg, #7dd3fc, #4ade80)", opacity: 0.4, zIndex: 0 }}/>
+          {/* Connector 3→4 */}
+          <div style={{ position: "absolute", top: "35px", left: "calc(62.5% + 36px)", right: "calc(12.5% + 36px)", height: "1px", background: "linear-gradient(90deg, #4ade80, #00ff88)", opacity: 0.4, zIndex: 0 }}/>
           {([
             { n: 1, color: "#00B4D8", title: "Predict", desc: "Post a bold forecast with your confidence level 1–99%.", svg: <svg width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> },
             { n: 2, color: "#7dd3fc", title: "Vote", desc: "Community votes move the consensus probability in real time.", svg: <svg width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> },
