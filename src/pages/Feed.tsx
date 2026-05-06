@@ -126,50 +126,50 @@ const getTheme = (question: string, category: string): PredTheme => {
       svg: '<circle cx="12" cy="12" r="6"/><ellipse cx="12" cy="12" rx="11" ry="4" fill="none" transform="rotate(-20 12 12)"/>' };
 
   // ── SPORTS ───────────────────────────────────────────────────────
-  if (q.includes("nba") || q.includes("basketball"))
-    // Basketball with seams
+  if (q.includes("nba") || q.includes("basketball") || q.includes("lakers") || q.includes("celtics") || q.includes("warriors") || q.includes("heat") || q.includes("knicks") || q.includes("nets"))
+    // Basketball - circle with 3 seam lines
     return { color: "#ff6b35", bg: "#ff6b35", label: "🏀",
-      svg: '<circle cx="12" cy="12" r="10"/><path d="M4.93 4.93c4.69 4.69 4.69 12.28 0 16.97"/><path d="M19.07 4.93c-4.69 4.69-4.69 12.28 0 16.97"/><line x1="2" y1="12" x2="22" y2="12"/>' };
+      svg: '<circle cx="12" cy="12" r="9"/><path d="M3.5 7 Q12 10 20.5 7" fill="none"/><path d="M3.5 17 Q12 14 20.5 17" fill="none"/><line x1="12" y1="3" x2="12" y2="21"/>' };
 
   if (q.includes("nfl") || q.includes("super bowl") || q.includes("quarterback") || q.includes("touchdown") || q.includes("american football"))
-    // Football (oval with laces)
+    // Football with proper laces
     return { color: "#5b4fcf", bg: "#5b4fcf", label: "🏈",
-      svg: '<ellipse cx="12" cy="12" rx="9" ry="6"/><line x1="12" y1="6" x2="12" y2="18"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/>' };
+      svg: '<ellipse cx="12" cy="12" rx="9" ry="5.5" transform="rotate(-30 12 12)"/><line x1="8" y1="9" x2="15" y2="15" stroke-width="2"/><line x1="9.5" y1="8" x2="10.5" y2="10.5" stroke-width="1.2"/><line x1="11.5" y1="10" x2="12.5" y2="12.5" stroke-width="1.2"/><line x1="13.5" y1="12" x2="14.5" y2="14.5" stroke-width="1.2"/>' };
 
-  if (q.includes("soccer") || q.includes("world cup") || q.includes("fifa") || q.includes("premier league") || q.includes("champions league") || q.includes("mls") || q.includes("football") && (q.includes("european") || q.includes("league") || q.includes("cup")))
-    // Soccer ball pentagon pattern
+  if (q.includes("soccer") || q.includes("world cup") || q.includes("fifa") || q.includes("premier league") || q.includes("champions league") || q.includes("mls") || (q.includes("football") && (q.includes("european") || q.includes("league") || q.includes("cup"))))
+    // Soccer ball - hexagon pattern
     return { color: "#16a34a", bg: "#16a34a", label: "⚽",
-      svg: '<circle cx="12" cy="12" r="10"/><polygon points="12,5 14,9 18,9 15,12 16,16 12,14 8,16 9,12 6,9 10,9" fill="#16a34a" opacity="0.6"/>' };
+      svg: '<circle cx="12" cy="12" r="9"/><polygon points="12,7 14.5,9 13.5,12 10.5,12 9.5,9" fill="none" stroke-width="1.2"/><line x1="12" y1="3" x2="12" y2="7"/><line x1="3.5" y1="7.5" x2="9.5" y2="9"/><line x1="20.5" y1="7.5" x2="14.5" y2="9"/><line x1="6" y1="18.5" x2="10.5" y2="12"/><line x1="18" y1="18.5" x2="13.5" y2="12"/><line x1="6" y1="18.5" x2="18" y2="18.5"/>' };
 
-  if (q.includes("hockey") || q.includes("nhl") || q.includes("puck") || q.includes("zamboni"))
-    // Hockey stick + puck
+  if (q.includes("hockey") || q.includes("nhl") || q.includes("puck") || q.includes("zamboni") || q.includes("oilers") || q.includes("canadiens") || q.includes("sabres") || q.includes("hurricanes") || q.includes("flyers") || q.includes("avalanche") || q.includes("wild") || q.includes("golden knights") || q.includes("ducks") || q.includes("stanley cup") || q.includes("conn smythe") || q.includes("playoff") && q.includes("game"))
+    // Hockey stick (curved) + puck
     return { color: "#60a5fa", bg: "#60a5fa", label: "🏒",
-      svg: '<path d="M4 4 L4 16 Q4 19 7 19 L18 19" stroke-width="2.5" fill="none"/><ellipse cx="15" cy="20" rx="4" ry="2" fill="#60a5fa" opacity="0.5"/><ellipse cx="15" cy="20" rx="4" ry="2"/>' };
+      svg: '<path d="M5 3 C5 3 5 14 5 16 C5 18 7 20 9 20 L19 20" stroke-width="2.5" fill="none" stroke-linecap="round"/><ellipse cx="13" cy="20" rx="5" ry="2.5" fill="none" stroke-width="1.5"/>' };
 
-  if (q.includes("baseball") || q.includes("mlb") || q.includes("world series") || q.includes("pitcher"))
-    // Baseball with stitches
+  if (q.includes("baseball") || q.includes("mlb") || q.includes("world series") || q.includes("pitcher") || q.includes("blue jays") || q.includes("yankees") || q.includes("red sox") || q.includes("dodgers"))
+    // Baseball with curved stitches
     return { color: "#dc2626", bg: "#dc2626", label: "⚾",
-      svg: '<circle cx="12" cy="12" r="10"/><path d="M7 4.5 Q10 8 10 12 Q10 16 7 19.5" fill="none"/><path d="M17 4.5 Q14 8 14 12 Q14 16 17 19.5" fill="none"/>' };
+      svg: '<circle cx="12" cy="12" r="9"/><path d="M8.5 4 Q11 8 11 12 Q11 16 8.5 20" fill="none" stroke-width="1.5"/><path d="M15.5 4 Q13 8 13 12 Q13 16 15.5 20" fill="none" stroke-width="1.5"/><line x1="9" y1="7" x2="11" y2="7.5" stroke-width="1"/><line x1="9" y1="10" x2="11" y2="10.5" stroke-width="1"/><line x1="9" y1="13" x2="11" y2="13.5" stroke-width="1"/><line x1="13" y1="7.5" x2="15" y2="7" stroke-width="1"/><line x1="13" y1="10.5" x2="15" y2="10" stroke-width="1"/><line x1="13" y1="13.5" x2="15" y2="13" stroke-width="1"/>' };
 
-  if (q.includes("tennis") || q.includes("wimbledon") || q.includes("us open") || q.includes("grand slam"))
-    // Tennis racket + ball
+  if (q.includes("tennis") || q.includes("wimbledon") || q.includes("us open") || q.includes("grand slam") || q.includes("roland garros") || q.includes("australian open") || q.includes("djokovic") || q.includes("federer") || q.includes("nadal") || q.includes("sinner") || q.includes("alcaraz"))
+    // Tennis racket - oval head with strings + handle
     return { color: "#84cc16", bg: "#84cc16", label: "🎾",
-      svg: '<circle cx="9" cy="9" r="7" fill="none"/><line x1="4" y1="4" x2="14" y2="14"/><line x1="14" y1="4" x2="4" y2="14"/><line x1="14" y1="14" x2="20" y2="20" stroke-width="3"/><circle cx="20" cy="21" r="2" fill="#84cc16"/>' };
+      svg: '<ellipse cx="10" cy="9" rx="6" ry="7" fill="none" stroke-width="1.8"/><line x1="4" y1="9" x2="16" y2="9" stroke-width="1"/><line x1="4" y1="6" x2="16" y2="6" stroke-width="1"/><line x1="4" y1="12" x2="16" y2="12" stroke-width="1"/><line x1="10" y1="2" x2="10" y2="16" stroke-width="1"/><line x1="7" y1="2.5" x2="7" y2="15.5" stroke-width="1"/><line x1="13" y1="2.5" x2="13" y2="15.5" stroke-width="1"/><line x1="10" y1="16" x2="14" y2="22" stroke-width="2.5" stroke-linecap="round"/>' };
 
-  if (q.includes("golf") || q.includes("masters") || q.includes("pga") || q.includes("tiger"))
-    // Golf flag + hole
+  if (q.includes("golf") || q.includes("masters") || q.includes("pga") || q.includes("tiger") || q.includes("rory") || q.includes("scottie scheffler") || q.includes("lpga") || q.includes("augusta"))
+    // Golf club + ball on tee
     return { color: "#15803d", bg: "#15803d", label: "⛳",
-      svg: '<circle cx="12" cy="19" r="3"/><line x1="12" y1="16" x2="12" y2="4"/><polygon points="12,4 20,7 12,10" fill="#15803d" opacity="0.7"/>' };
+      svg: '<line x1="18" y1="2" x2="7" y2="17" stroke-width="2" stroke-linecap="round"/><path d="M7 17 L4 20 L9 20 Z" fill="#15803d"/><circle cx="9" cy="21" r="2" fill="none" stroke-width="1.5"/><line x1="9" y1="19" x2="9" y2="16" stroke-width="1"/>' };
 
-  if (q.includes("formula") || q.includes("f1") || q.includes("nascar") || q.includes("racing") || q.includes("car race"))
-    // Race car (simplified)
+  if (q.includes("formula") || q.includes("f1") || q.includes("nascar") || q.includes("racing") || q.includes("car race") || q.includes("verstappen") || q.includes("hamilton") || q.includes("grand prix"))
+    // F1 car - low profile with spoiler
     return { color: "#ef4444", bg: "#ef4444", label: "🏎",
-      svg: '<rect x="2" y="9" width="20" height="7" rx="3"/><rect x="6" y="6" width="10" height="4" rx="2"/><circle cx="7" cy="17" r="2.5"/><circle cx="17" cy="17" r="2.5"/>' };
+      svg: '<path d="M2 13 L5 10 L8 9 L14 9 L18 10 L22 11 L22 14 L18 15 L5 15 Z"/><circle cx="7" cy="15.5" r="2" fill="none" stroke-width="1.8"/><circle cx="17" cy="15.5" r="2" fill="none" stroke-width="1.8"/><path d="M14 9 L16 6 L18 9"/><line x1="8" y1="9" x2="8" y2="7"/>' };
 
-  if (q.includes("olympic") || q.includes("olympics"))
-    // Olympic rings (simplified 3 ring)
+  if (q.includes("olympic") || q.includes("olympics") || q.includes("paris 2024") || q.includes("los angeles 2028"))
+    // 5 Olympic rings properly colored
     return { color: "#0081C8", bg: "#0081C8", label: "🏅",
-      svg: '<circle cx="7" cy="12" r="4" fill="none" stroke-width="2"/><circle cx="12" cy="12" r="4" fill="none" stroke-width="2" stroke="#FCB131"/><circle cx="17" cy="12" r="4" fill="none" stroke-width="2" stroke="#00A651"/>' };
+      svg: '<circle cx="6" cy="11" r="3.5" fill="none" stroke="#0081C8" stroke-width="2"/><circle cx="12" cy="11" r="3.5" fill="none" stroke="#FCB131" stroke-width="2"/><circle cx="18" cy="11" r="3.5" fill="none" stroke="#000" stroke-width="2"/><circle cx="9" cy="15" r="3.5" fill="none" stroke="#00A651" stroke-width="2"/><circle cx="15" cy="15" r="3.5" fill="none" stroke="#EE334E" stroke-width="2"/>' };
 
   if (q.includes("sport") || q.includes("champion") || q.includes("trophy") || q.includes("medal"))
     // Trophy
