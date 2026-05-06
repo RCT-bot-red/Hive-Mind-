@@ -70,6 +70,21 @@ export default function Admin() {
     setPredictions(prev => prev.map(p => p.id === predId ? { ...p, image_url: null } : p));
   };
 
+  const deletePrediction = async (predId: string, imageUrl: string | null) => {
+    if (!window.confirm("Delete this prediction permanently? This cannot be undone.")) return;
+    setSaving(predId);
+    // Delete image from storage if exists
+    if (imageUrl) {
+      const path = imageUrl.split("/predictions/")[1];
+      if (path) await supabase.storage.from("predictions").remove([path]);
+    }
+    await supabase.from("votes").delete().eq("prediction_id", predId);
+    await supabase.from("comments").delete().eq("prediction_id", predId);
+    await supabase.from("predictions").delete().eq("id", predId);
+    setPredictions(prev => prev.filter(p => p.id !== predId));
+    setSaving(null);
+  };
+
   const isPastDeadline = (date: string) => new Date(date) < new Date();
 
   if (!isAdmin) return null;
@@ -189,6 +204,9 @@ export default function Admin() {
                             </button>
                           </div>
                         )}
+                        <button onClick={() => deletePrediction(p.id, p.image_url)} disabled={saving === p.id} style={{ background: "#ff444410", border: "1px solid #ff444440", color: "#ff6666", padding: "6px 14px", borderRadius: "8px", fontSize: "12px", cursor: "pointer", marginLeft: "auto" }}>
+                          🗑 Delete
+                        </button>
                       </div>
                     </div>
                   </div>
