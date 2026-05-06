@@ -4,50 +4,82 @@ import { supabase } from "../utils/supabase";
 
 const CATEGORIES = ["All", "Politics", "Economics", "Sports", "Technology", "World Events", "Science", "Climate", "Health"];
 
-// Smart keyword extraction for Unsplash images
-const getUnsplashUrl = (keywords: string) => 
-  `https://source.unsplash.com/600x400/?${encodeURIComponent(keywords)}`;
-
-const getImageKeywords = (question: string, category: string): string => {
+// Curated Unsplash photo IDs per topic
+const getImageUrl = (question: string, category: string): string => {
   const q = question.toLowerCase();
   
-  // Specific topics
-  if (q.includes("bitcoin") || q.includes("crypto") || q.includes("ethereum")) return "bitcoin,cryptocurrency,blockchain";
-  if (q.includes("stock") || q.includes("market") || q.includes("s&p") || q.includes("nasdaq")) return "stock market,wall street,finance";
-  if (q.includes("fed") || q.includes("interest rate") || q.includes("inflation")) return "federal reserve,economy,finance";
-  if (q.includes("oil") || q.includes("energy") || q.includes("gas")) return "oil,energy,petroleum";
-  if (q.includes("gold") || q.includes("silver")) return "gold,precious metals,commodity";
-  if (q.includes("trump") || q.includes("biden") || q.includes("president")) return "white house,president,politics";
-  if (q.includes("election") || q.includes("vote") || q.includes("poll")) return "election,voting,democracy";
-  if (q.includes("war") || q.includes("ukraine") || q.includes("russia")) return "war,conflict,military";
-  if (q.includes("china") || q.includes("taiwan") || q.includes("xi")) return "china,beijing,asia";
-  if (q.includes("ai") || q.includes("artificial intelligence") || q.includes("openai") || q.includes("chatgpt")) return "artificial intelligence,technology,robot";
-  if (q.includes("apple") || q.includes("iphone") || q.includes("ipad")) return "apple,iphone,technology";
-  if (q.includes("tesla") || q.includes("elon") || q.includes("musk")) return "tesla,electric car,innovation";
-  if (q.includes("space") || q.includes("nasa") || q.includes("rocket")) return "space,rocket,nasa";
-  if (q.includes("nba") || q.includes("basketball")) return "basketball,nba,sports";
-  if (q.includes("nfl") || q.includes("football") || q.includes("super bowl")) return "american football,nfl,sports";
-  if (q.includes("world cup") || q.includes("soccer") || q.includes("fifa")) return "soccer,football,world cup";
-  if (q.includes("climate") || q.includes("temperature") || q.includes("carbon")) return "climate change,environment,earth";
-  if (q.includes("covid") || q.includes("pandemic") || q.includes("vaccine")) return "vaccine,health,medicine";
-  if (q.includes("recession") || q.includes("gdp") || q.includes("economy")) return "economy,recession,finance";
-  if (q.includes("housing") || q.includes("real estate") || q.includes("mortgage")) return "real estate,house,property";
-  if (q.includes("dollar") || q.includes("currency") || q.includes("euro")) return "currency,money,exchange";
-  if (q.includes("oscar") || q.includes("grammy") || q.includes("movie")) return "cinema,hollywood,awards";
-  if (q.includes("google") || q.includes("meta") || q.includes("microsoft")) return "technology,silicon valley,tech company";
-  
-  // Category fallbacks
-  const categoryKeywords: Record<string, string> = {
-    Politics: "politics,government,capitol",
-    Economics: "economy,finance,wall street",
-    Sports: "sports,competition,athlete",
-    Technology: "technology,innovation,digital",
-    "World Events": "world news,globe,international",
-    Science: "science,research,laboratory",
-    Climate: "climate,nature,environment",
-    Health: "health,medicine,hospital",
+  // Specific topics - using direct Unsplash photo IDs
+  if (q.includes("bitcoin") || q.includes("crypto") || q.includes("ethereum"))
+    return "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=600&q=80";
+  if (q.includes("stock") || q.includes("s&p") || q.includes("nasdaq") || q.includes("dow"))
+    return "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&q=80";
+  if (q.includes("fed") || q.includes("interest rate") || q.includes("inflation"))
+    return "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&q=80";
+  if (q.includes("oil") || q.includes("energy") || q.includes("gas") || q.includes("opec"))
+    return "https://images.unsplash.com/photo-1567427017947-545c5f8d16ad?w=600&q=80";
+  if (q.includes("gold") || q.includes("silver") || q.includes("commodity"))
+    return "https://images.unsplash.com/photo-1610375461246-83df859d849d?w=600&q=80";
+  if (q.includes("trump") || q.includes("president") || q.includes("white house"))
+    return "https://images.unsplash.com/photo-1546795708-c962dc089798?w=600&q=80";
+  if (q.includes("election") || q.includes("vote") || q.includes("ballot"))
+    return "https://images.unsplash.com/photo-1540910419892-4a36d2c3266c?w=600&q=80";
+  if (q.includes("ukraine") || q.includes("russia") || q.includes("war") || q.includes("military"))
+    return "https://images.unsplash.com/photo-1579486175395-eb44a0f0ebfd?w=600&q=80";
+  if (q.includes("china") || q.includes("taiwan") || q.includes("beijing"))
+    return "https://images.unsplash.com/photo-1474181487882-5abf3f0ba6c2?w=600&q=80";
+  if (q.includes("ai") || q.includes("artificial intelligence") || q.includes("openai") || q.includes("chatgpt") || q.includes("llm"))
+    return "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=600&q=80";
+  if (q.includes("apple") || q.includes("iphone") || q.includes("ipad") || q.includes("mac"))
+    return "https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=600&q=80";
+  if (q.includes("tesla") || q.includes("electric") || q.includes("ev"))
+    return "https://images.unsplash.com/photo-1617788138017-80ad40651399?w=600&q=80";
+  if (q.includes("elon") || q.includes("musk") || q.includes("spacex") || q.includes("x.com"))
+    return "https://images.unsplash.com/photo-1517976487492-5750f3195933?w=600&q=80";
+  if (q.includes("space") || q.includes("nasa") || q.includes("rocket") || q.includes("moon") || q.includes("mars"))
+    return "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=600&q=80";
+  if (q.includes("nba") || q.includes("basketball"))
+    return "https://images.unsplash.com/photo-1546519638405-a9d1b34b2d09?w=600&q=80";
+  if (q.includes("nfl") || q.includes("super bowl") || q.includes("football"))
+    return "https://images.unsplash.com/photo-1566577739112-5180d4bf9390?w=600&q=80";
+  if (q.includes("soccer") || q.includes("world cup") || q.includes("fifa") || q.includes("champions league"))
+    return "https://images.unsplash.com/photo-1553778263-73a83bab9b0c?w=600&q=80";
+  if (q.includes("climate") || q.includes("global warming") || q.includes("carbon") || q.includes("emission"))
+    return "https://images.unsplash.com/photo-1569163139599-0f4517e36f51?w=600&q=80";
+  if (q.includes("covid") || q.includes("pandemic") || q.includes("vaccine") || q.includes("virus"))
+    return "https://images.unsplash.com/photo-1584118624012-df056829fbd0?w=600&q=80";
+  if (q.includes("recession") || q.includes("gdp") || q.includes("economy"))
+    return "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=600&q=80";
+  if (q.includes("real estate") || q.includes("housing") || q.includes("mortgage"))
+    return "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=600&q=80";
+  if (q.includes("dollar") || q.includes("currency") || q.includes("euro") || q.includes("exchange rate"))
+    return "https://images.unsplash.com/photo-1580519542036-c47de6196ba5?w=600&q=80";
+  if (q.includes("movie") || q.includes("oscar") || q.includes("film") || q.includes("box office"))
+    return "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=600&q=80";
+  if (q.includes("google") || q.includes("alphabet") || q.includes("search"))
+    return "https://images.unsplash.com/photo-1573804633927-bfcbcd909acd?w=600&q=80";
+  if (q.includes("meta") || q.includes("facebook") || q.includes("instagram"))
+    return "https://images.unsplash.com/photo-1611605698335-8b1569810432?w=600&q=80";
+  if (q.includes("microsoft") || q.includes("windows") || q.includes("azure"))
+    return "https://images.unsplash.com/photo-1633419461186-7d40a38105ec?w=600&q=80";
+  if (q.includes("amazon") || q.includes("aws") || q.includes("bezos"))
+    return "https://images.unsplash.com/photo-1523474253046-8cd2748b5fd2?w=600&q=80";
+  if (q.includes("nuclear") || q.includes("weapon") || q.includes("missile"))
+    return "https://images.unsplash.com/photo-1516912481808-3406841bd33c?w=600&q=80";
+  if (q.includes("bank") || q.includes("financial") || q.includes("wall street"))
+    return "https://images.unsplash.com/photo-1501167786227-4cba60f6d58f?w=600&q=80";
+
+  // Category fallbacks with specific curated photos
+  const fallbacks: Record<string, string> = {
+    Politics: "https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=600&q=80",
+    Economics: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&q=80",
+    Sports: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=600&q=80",
+    Technology: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&q=80",
+    "World Events": "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600&q=80",
+    Science: "https://images.unsplash.com/photo-1507668077129-56e32842fceb?w=600&q=80",
+    Climate: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=600&q=80",
+    Health: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=600&q=80",
   };
-  return categoryKeywords[category] || "prediction,future,data";
+  return fallbacks[category] || "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600&q=80";
 };
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -136,7 +168,7 @@ export default function Feed() {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "20px" }}>
             {predictions.map(p => {
               const color = CATEGORY_COLORS[p.category] || "#00B4D8";
-              const img = getUnsplashUrl(getImageKeywords(p.question, p.category));
+              const img = getImageUrl(p.question, p.category);
               const days = daysLeft(p.resolution_date);
               const expired = days === "Expired";
 
