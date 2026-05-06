@@ -9,87 +9,203 @@ type PredTheme = { color: string; bg: string; label: string; svg: string };
 const getTheme = (question: string, category: string): PredTheme => {
   const q = question.toLowerCase();
 
-  // Crypto
+  // ── CRYPTO ──────────────────────────────────────────────────────
   if (q.includes("bitcoin") || q.includes("btc"))
-    return { color: "#f7931a", bg: "#f7931a", label: "₿", svg: '<path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>' };
+    // Bitcoin ₿ symbol
+    return { color: "#f7931a", bg: "#f7931a", label: "₿",
+      svg: '<text x="12" y="17" text-anchor="middle" font-size="18" font-weight="900" font-family="Arial" fill="#f7931a">₿</text>' };
+
   if (q.includes("ethereum") || q.includes("eth") || q.includes("crypto"))
-    return { color: "#627eea", bg: "#627eea", label: "Ξ", svg: '<path d="M12 2L2 12l10 6 10-6L12 2z"/><path d="M2 12l10 6 10-6"/>' };
+    // Ethereum diamond/prism shape
+    return { color: "#627eea", bg: "#627eea", label: "Ξ",
+      svg: '<polygon points="12,2 20,12 12,16 4,12" fill="#627eea" opacity="0.8"/><polygon points="12,16 20,12 12,22 4,12" fill="#627eea" opacity="0.5"/>' };
 
-  // Finance
+  // ── FINANCE ─────────────────────────────────────────────────────
   if (q.includes("stock") || q.includes("s&p") || q.includes("nasdaq") || q.includes("dow") || q.includes("index"))
-    return { color: "#00ff88", bg: "#00ff88", label: "📈", svg: '<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>' };
-  if (q.includes("gold") || q.includes("silver"))
-    return { color: "#ffd700", bg: "#ffd700", label: "Au", svg: '<line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>' };
-  if (q.includes("oil") || q.includes("energy") || q.includes("opec"))
-    return { color: "#f97316", bg: "#f97316", label: "⛽", svg: '<path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/>' };
-  if (q.includes("fed") || q.includes("interest rate") || q.includes("inflation"))
-    return { color: "#00B4D8", bg: "#00B4D8", label: "$", svg: '<rect x="2" y="7" width="20" height="15" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>' };
-  if (q.includes("recession") || q.includes("gdp") || q.includes("economy") || q.includes("dollar") || q.includes("currency"))
-    return { color: "#4ade80", bg: "#4ade80", label: "$", svg: '<line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>' };
+    // Candlestick chart
+    return { color: "#00ff88", bg: "#00ff88", label: "📊",
+      svg: '<line x1="6" y1="4" x2="6" y2="20" stroke-width="1"/><rect x="4" y="8" width="4" height="7" rx="0.5"/><line x1="12" y1="2" x2="12" y2="20" stroke-width="1"/><rect x="10" y="6" width="4" height="9" rx="0.5"/><line x1="18" y1="6" x2="18" y2="20" stroke-width="1"/><rect x="16" y="10" width="4" height="6" rx="0.5"/>' };
 
-  // Politics
-  if (q.includes("trump") || q.includes("election") || q.includes("president") || q.includes("vote") || q.includes("congress") || q.includes("senate"))
-    return { color: "#ff4444", bg: "#ff4444", label: "🏛", svg: '<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>' };
+  if (q.includes("gold") || q.includes("silver") || q.includes("precious metal"))
+    // Gold bar shape
+    return { color: "#ffd700", bg: "#ffd700", label: "Au",
+      svg: '<rect x="3" y="8" width="18" height="10" rx="2" fill="#ffd700" opacity="0.3"/><rect x="3" y="8" width="18" height="10" rx="2"/><line x1="7" y1="8" x2="7" y2="18"/><line x1="12" y1="8" x2="12" y2="18"/><line x1="17" y1="8" x2="17" y2="18"/><text x="12" y="16" text-anchor="middle" font-size="5" font-weight="900" fill="#ffd700">AU</text>' };
 
-  // War & Geopolitics
-  if (q.includes("ukraine") || q.includes("russia") || q.includes("war") || q.includes("nato") || q.includes("military"))
-    return { color: "#ef4444", bg: "#ef4444", label: "⚔", svg: '<circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>' };
-  if (q.includes("china") || q.includes("taiwan") || q.includes("xi"))
-    return { color: "#dc2626", bg: "#dc2626", label: "🌏", svg: '<circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>' };
+  if (q.includes("oil") || q.includes("opec") || q.includes("crude"))
+    // Oil barrel
+    return { color: "#f97316", bg: "#f97316", label: "🛢",
+      svg: '<ellipse cx="12" cy="7" rx="7" ry="3" fill="none"/><rect x="5" y="7" width="14" height="12"/><ellipse cx="12" cy="19" rx="7" ry="3" fill="none"/><line x1="5" y1="11" x2="19" y2="11"/><line x1="5" y1="15" x2="19" y2="15"/>' };
 
-  // Tech companies
-  if (q.includes("openai") || q.includes("chatgpt") || q.includes("gpt") || q.includes("ai") || q.includes("llm") || q.includes("claude") || q.includes("gemini"))
-    return { color: "#a855f7", bg: "#a855f7", label: "AI", svg: '<rect x="2" y="3" width="20" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><circle cx="15" cy="10" r="2"/><path d="M9 13s1 1 3 1 3-1 3-1"/>' };
-  if (q.includes("nvidia") || q.includes("chip") || q.includes("semiconductor"))
-    return { color: "#76b900", bg: "#76b900", label: "GPU", svg: '<rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/>' };
-  if (q.includes("apple") || q.includes("iphone"))
-    return { color: "#6b7280", bg: "#6b7280", label: "", svg: '<rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>' };
-  if (q.includes("tesla"))
-    return { color: "#cc0000", bg: "#cc0000", label: "T", svg: '<path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v9a2 2 0 0 1-2 2h-2"/><circle cx="9" cy="19" r="2"/><circle cx="17" cy="19" r="2"/>' };
-  if (q.includes("microsoft") || q.includes("windows"))
-    return { color: "#0078d4", bg: "#0078d4", label: "", svg: '<rect x="3" y="3" width="8" height="8"/><rect x="13" y="3" width="8" height="8"/><rect x="3" y="13" width="8" height="8"/><rect x="13" y="13" width="8" height="8"/>' };
-  if (q.includes("google") || q.includes("alphabet"))
-    return { color: "#4285f4", bg: "#4285f4", label: "G", svg: '<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>' };
-  if (q.includes("amazon") || q.includes("aws"))
-    return { color: "#ff9900", bg: "#ff9900", label: "A", svg: '<path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/>' };
+  if (q.includes("fed") || q.includes("interest rate") || q.includes("inflation") || q.includes("fomc"))
+    // Federal building columns
+    return { color: "#00B4D8", bg: "#00B4D8", label: "🏦",
+      svg: '<rect x="2" y="18" width="20" height="2"/><rect x="4" y="10" width="2" height="8"/><rect x="8" y="10" width="2" height="8"/><rect x="12" y="10" width="2" height="8"/><rect x="16" y="10" width="2" height="8"/><polygon points="12,2 2,10 22,10"/>' };
 
-  // Space
-  if (q.includes("space") || q.includes("nasa") || q.includes("rocket") || q.includes("moon") || q.includes("mars") || q.includes("spacex"))
-    return { color: "#818cf8", bg: "#818cf8", label: "🚀", svg: '<path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>' };
+  if (q.includes("dollar") || q.includes("currency") || q.includes("euro") || q.includes("yen") || q.includes("forex"))
+    // Dollar sign
+    return { color: "#4ade80", bg: "#4ade80", label: "$",
+      svg: '<text x="12" y="17" text-anchor="middle" font-size="20" font-weight="900" font-family="Arial" fill="#4ade80">$</text><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/>' };
 
-  // Sports
-  if (q.includes("nba") || q.includes("basketball"))
-    return { color: "#ff6b35", bg: "#ff6b35", label: "", svg: '<circle cx="12" cy="12" r="10"/><path d="M4.93 4.93c4.69 4.69 4.69 12.28 0 16.97"/><path d="M19.07 4.93c-4.69 4.69-4.69 12.28 0 16.97"/><line x1="2" y1="12" x2="22" y2="12"/>' };
-  if (q.includes("nfl") || q.includes("super bowl") || q.includes("football"))
-    return { color: "#1a3a6e", bg: "#2d5be3", label: "", svg: '<ellipse cx="12" cy="12" rx="10" ry="6" transform="rotate(-45 12 12)"/><line x1="5" y1="5" x2="19" y2="19"/>' };
-  if (q.includes("soccer") || q.includes("world cup") || q.includes("fifa") || q.includes("premier league") || q.includes("champions league"))
-    return { color: "#16a34a", bg: "#16a34a", label: "⚽", svg: '<circle cx="12" cy="12" r="10"/><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>' };
+  if (q.includes("recession") || q.includes("gdp") || q.includes("economy"))
+    // Arrow down (recession)
+    return { color: "#ef4444", bg: "#ef4444", label: "📉",
+      svg: '<polyline points="2,5 9,12 13,8 22,17"/><polyline points="16,17 22,17 22,11"/>' };
 
-  // Environment
-  if (q.includes("climate") || q.includes("carbon") || q.includes("emission") || q.includes("warming"))
-    return { color: "#22c55e", bg: "#22c55e", label: "🌍", svg: '<path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/>' };
-
-  // Health
-  if (q.includes("health") || q.includes("covid") || q.includes("vaccine") || q.includes("fda") || q.includes("drug") || q.includes("cancer"))
-    return { color: "#ec4899", bg: "#ec4899", label: "♥", svg: '<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>' };
-
-  // Real estate
   if (q.includes("real estate") || q.includes("housing") || q.includes("mortgage"))
-    return { color: "#eab308", bg: "#eab308", label: "🏠", svg: '<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>' };
+    // House shape
+    return { color: "#eab308", bg: "#eab308", label: "🏠",
+      svg: '<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><rect x="9" y="14" width="6" height="8"/>' };
 
-  // Category fallbacks with distinct colors
+  // ── POLITICS ─────────────────────────────────────────────────────
+  if (q.includes("trump") || q.includes("election") || q.includes("president") || q.includes("vote") || q.includes("congress") || q.includes("senate") || q.includes("ballot") || q.includes("democrat") || q.includes("republican"))
+    // Ballot box with checkmark
+    return { color: "#ff4444", bg: "#ff4444", label: "🗳",
+      svg: '<rect x="3" y="7" width="18" height="14" rx="2"/><path d="M7 7V5a5 5 0 0 1 10 0v2"/><polyline points="9 13 11 15 15 11"/>' };
+
+  // ── WAR & GEOPOLITICS ────────────────────────────────────────────
+  if (q.includes("ukraine") || q.includes("russia") || q.includes("war") || q.includes("nato") || q.includes("military") || q.includes("conflict") || q.includes("missile") || q.includes("ceasefire"))
+    // Shield / crossed swords
+    return { color: "#ef4444", bg: "#ef4444", label: "⚔",
+      svg: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>' };
+
+  if (q.includes("china") || q.includes("taiwan") || q.includes("beijing") || q.includes("xi"))
+    // Globe focused on Asia
+    return { color: "#dc2626", bg: "#dc2626", label: "🌏",
+      svg: '<circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15 15 0 0 1 0 20"/><path d="M12 2a15 15 0 0 0 0 20"/>' };
+
+  // ── AI & TECH ────────────────────────────────────────────────────
+  if (q.includes("openai") || q.includes("chatgpt") || q.includes("gpt") || q.includes("llm") || q.includes(" ai ") || q.includes("artificial intelligence") || q.includes("claude") || q.includes("gemini") || q.includes("deepseek"))
+    // Circuit brain
+    return { color: "#a855f7", bg: "#a855f7", label: "AI",
+      svg: '<rect x="4" y="4" width="16" height="16" rx="8"/><circle cx="9" cy="10" r="1.5" fill="#a855f7"/><circle cx="15" cy="10" r="1.5" fill="#a855f7"/><path d="M9 14s1 2 3 2 3-2 3-2"/><line x1="4" y1="8" x2="1" y2="8"/><line x1="4" y1="12" x2="1" y2="12"/><line x1="4" y1="16" x2="1" y2="16"/><line x1="20" y1="8" x2="23" y2="8"/><line x1="20" y1="12" x2="23" y2="12"/><line x1="20" y1="16" x2="23" y2="16"/>' };
+
+  if (q.includes("nvidia") || q.includes("chip") || q.includes("semiconductor") || q.includes("gpu"))
+    // Microchip
+    return { color: "#76b900", bg: "#76b900", label: "💾",
+      svg: '<rect x="6" y="6" width="12" height="12" rx="2"/><rect x="9" y="9" width="6" height="6" rx="1"/><line x1="9" y1="2" x2="9" y2="6"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="15" y1="2" x2="15" y2="6"/><line x1="9" y1="18" x2="9" y2="22"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="15" y1="18" x2="15" y2="22"/><line x1="2" y1="9" x2="6" y2="9"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="2" y1="15" x2="6" y2="15"/><line x1="18" y1="9" x2="22" y2="9"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="18" y1="15" x2="22" y2="15"/>' };
+
+  if (q.includes("apple") || q.includes("iphone") || q.includes("ipad") || q.includes("mac"))
+    // Apple-like bitten circle
+    return { color: "#6b7280", bg: "#6b7280", label: "",
+      svg: '<path d="M12 3c-1.5 0-3 .5-4 1.5C6 1 4 1 4 1s0 2 1.5 3.5C4 6 3 8 3 10c0 5 4 9 9 9s9-4 9-9c0-4-3-7-6-8-1-.3-2-.7-3-1z"/>' };
+
+  if (q.includes("tesla") || q.includes("elon musk") || q.includes("electric car") || q.includes(" ev "))
+    // Electric car / lightning bolt
+    return { color: "#cc0000", bg: "#cc0000", label: "⚡",
+      svg: '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>' };
+
+  if (q.includes("microsoft") || q.includes("windows") || q.includes("azure") || q.includes("bing"))
+    // 4-square Windows logo
+    return { color: "#0078d4", bg: "#0078d4", label: "",
+      svg: '<rect x="2" y="2" width="9" height="9" rx="1"/><rect x="13" y="2" width="9" height="9" rx="1"/><rect x="2" y="13" width="9" height="9" rx="1"/><rect x="13" y="13" width="9" height="9" rx="1"/>' };
+
+  if (q.includes("google") || q.includes("alphabet") || q.includes("youtube") || q.includes("search"))
+    // Magnifying glass
+    return { color: "#4285f4", bg: "#4285f4", label: "G",
+      svg: '<circle cx="10" cy="10" r="7"/><line x1="15.5" y1="15.5" x2="22" y2="22" stroke-width="2.5"/>' };
+
+  if (q.includes("amazon") || q.includes("aws") || q.includes("bezos"))
+    // Shopping cart / box
+    return { color: "#ff9900", bg: "#ff9900", label: "A",
+      svg: '<path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>' };
+
+  if (q.includes("meta") || q.includes("facebook") || q.includes("instagram") || q.includes("zuckerberg"))
+    // Infinity / Meta logo shape
+    return { color: "#0081fb", bg: "#0081fb", label: "∞",
+      svg: '<path d="M12 12c-2-2.5-4-4-6-4a4 4 0 0 0 0 8c2 0 4-1.5 6-4z"/><path d="M12 12c2 2.5 4 4 6 4a4 4 0 0 0 0-8c-2 0-4 1.5-6 4z"/>' };
+
+  // ── SPACE ────────────────────────────────────────────────────────
+  if (q.includes("space") || q.includes("nasa") || q.includes("rocket") || q.includes("spacex") || q.includes("starship"))
+    // Rocket shape
+    return { color: "#818cf8", bg: "#818cf8", label: "🚀",
+      svg: '<path d="M12 2c0 0-7 5-7 11v2l3 3h8l3-3v-2c0-6-7-11-7-11z"/><circle cx="12" cy="11" r="2" fill="#818cf8"/><path d="M9 17l-3 4h12l-3-4"/>' };
+
+  if (q.includes("moon") || q.includes("mars") || q.includes("satellite") || q.includes("planet"))
+    // Planet with ring
+    return { color: "#818cf8", bg: "#818cf8", label: "🪐",
+      svg: '<circle cx="12" cy="12" r="6"/><ellipse cx="12" cy="12" rx="11" ry="4" fill="none" transform="rotate(-20 12 12)"/>' };
+
+  // ── SPORTS ───────────────────────────────────────────────────────
+  if (q.includes("nba") || q.includes("basketball"))
+    // Basketball with seams
+    return { color: "#ff6b35", bg: "#ff6b35", label: "🏀",
+      svg: '<circle cx="12" cy="12" r="10"/><path d="M4.93 4.93c4.69 4.69 4.69 12.28 0 16.97"/><path d="M19.07 4.93c-4.69 4.69-4.69 12.28 0 16.97"/><line x1="2" y1="12" x2="22" y2="12"/>' };
+
+  if (q.includes("nfl") || q.includes("super bowl") || q.includes("quarterback") || q.includes("touchdown") || q.includes("american football"))
+    // Football (oval with laces)
+    return { color: "#5b4fcf", bg: "#5b4fcf", label: "🏈",
+      svg: '<ellipse cx="12" cy="12" rx="9" ry="6"/><line x1="12" y1="6" x2="12" y2="18"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/>' };
+
+  if (q.includes("soccer") || q.includes("world cup") || q.includes("fifa") || q.includes("premier league") || q.includes("champions league") || q.includes("mls") || q.includes("football") && (q.includes("european") || q.includes("league") || q.includes("cup")))
+    // Soccer ball pentagon pattern
+    return { color: "#16a34a", bg: "#16a34a", label: "⚽",
+      svg: '<circle cx="12" cy="12" r="10"/><polygon points="12,5 14,9 18,9 15,12 16,16 12,14 8,16 9,12 6,9 10,9" fill="#16a34a" opacity="0.6"/>' };
+
+  if (q.includes("hockey") || q.includes("nhl") || q.includes("puck") || q.includes("zamboni"))
+    // Hockey stick + puck
+    return { color: "#60a5fa", bg: "#60a5fa", label: "🏒",
+      svg: '<path d="M4 4 L4 16 Q4 19 7 19 L18 19" stroke-width="2.5" fill="none"/><ellipse cx="15" cy="20" rx="4" ry="2" fill="#60a5fa" opacity="0.5"/><ellipse cx="15" cy="20" rx="4" ry="2"/>' };
+
+  if (q.includes("baseball") || q.includes("mlb") || q.includes("world series") || q.includes("pitcher"))
+    // Baseball with stitches
+    return { color: "#dc2626", bg: "#dc2626", label: "⚾",
+      svg: '<circle cx="12" cy="12" r="10"/><path d="M7 4.5 Q10 8 10 12 Q10 16 7 19.5" fill="none"/><path d="M17 4.5 Q14 8 14 12 Q14 16 17 19.5" fill="none"/>' };
+
+  if (q.includes("tennis") || q.includes("wimbledon") || q.includes("us open") || q.includes("grand slam"))
+    // Tennis racket + ball
+    return { color: "#84cc16", bg: "#84cc16", label: "🎾",
+      svg: '<circle cx="9" cy="9" r="7" fill="none"/><line x1="4" y1="4" x2="14" y2="14"/><line x1="14" y1="4" x2="4" y2="14"/><line x1="14" y1="14" x2="20" y2="20" stroke-width="3"/><circle cx="20" cy="21" r="2" fill="#84cc16"/>' };
+
+  if (q.includes("golf") || q.includes("masters") || q.includes("pga") || q.includes("tiger"))
+    // Golf flag + hole
+    return { color: "#15803d", bg: "#15803d", label: "⛳",
+      svg: '<circle cx="12" cy="19" r="3"/><line x1="12" y1="16" x2="12" y2="4"/><polygon points="12,4 20,7 12,10" fill="#15803d" opacity="0.7"/>' };
+
+  if (q.includes("formula") || q.includes("f1") || q.includes("nascar") || q.includes("racing") || q.includes("car race"))
+    // Race car (simplified)
+    return { color: "#ef4444", bg: "#ef4444", label: "🏎",
+      svg: '<rect x="2" y="9" width="20" height="7" rx="3"/><rect x="6" y="6" width="10" height="4" rx="2"/><circle cx="7" cy="17" r="2.5"/><circle cx="17" cy="17" r="2.5"/>' };
+
+  if (q.includes("olympic") || q.includes("olympics"))
+    // Olympic rings (simplified 3 ring)
+    return { color: "#0081C8", bg: "#0081C8", label: "🏅",
+      svg: '<circle cx="7" cy="12" r="4" fill="none" stroke-width="2"/><circle cx="12" cy="12" r="4" fill="none" stroke-width="2" stroke="#FCB131"/><circle cx="17" cy="12" r="4" fill="none" stroke-width="2" stroke="#00A651"/>' };
+
+  if (q.includes("sport") || q.includes("champion") || q.includes("trophy") || q.includes("medal"))
+    // Trophy
+    return { color: "#ffd700", bg: "#ffd700", label: "🏆",
+      svg: '<path d="M6 9H4a2 2 0 0 1-2-2V5h4"/><path d="M18 9h2a2 2 0 0 0 2-2V5h-4"/><path d="M6 5h12v4a6 6 0 0 1-12 0V5z"/><line x1="12" y1="15" x2="12" y2="19"/><rect x="8" y="19" width="8" height="2" rx="1"/>' };
+
+  // ── CLIMATE & SCIENCE ────────────────────────────────────────────
+  if (q.includes("climate") || q.includes("carbon") || q.includes("emission") || q.includes("warming") || q.includes("temperature") || q.includes("sea level"))
+    // Thermometer rising
+    return { color: "#22c55e", bg: "#22c55e", label: "🌡",
+      svg: '<path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/>' };
+
+  if (q.includes("health") || q.includes("covid") || q.includes("vaccine") || q.includes("fda") || q.includes("drug") || q.includes("cancer") || q.includes("disease") || q.includes("hospital"))
+    // Medical cross / pulse
+    return { color: "#ec4899", bg: "#ec4899", label: "🏥",
+      svg: '<rect x="8" y="2" width="8" height="20" rx="1"/><rect x="2" y="8" width="20" height="8" rx="1"/>' };
+
+  if (q.includes("science") || q.includes("research") || q.includes("study") || q.includes("quantum"))
+    // Flask / beaker
+    return { color: "#06b6d4", bg: "#06b6d4", label: "🔬",
+      svg: '<path d="M9 3h6v8l4 7H5l4-7V3z"/><line x1="9" y1="3" x2="15" y2="3"/><circle cx="10" cy="16" r="1" fill="#06b6d4"/><circle cx="13" cy="14" r="1" fill="#06b6d4"/>' };
+
+  // Category fallbacks
   const cats: Record<string, PredTheme> = {
-    Politics: { color: "#ff4444", bg: "#ff4444", label: "🏛", svg: '<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>' },
-    Economics: { color: "#00ff88", bg: "#00ff88", label: "$", svg: '<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/>' },
+    Politics: { color: "#ff4444", bg: "#ff4444", label: "🏛", svg: '<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>' },
+    Economics: { color: "#00ff88", bg: "#00ff88", label: "$", svg: '<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>' },
     Sports: { color: "#ff6b35", bg: "#ff6b35", label: "⚽", svg: '<circle cx="12" cy="12" r="10"/><path d="M4.93 4.93l14.14 14.14"/>' },
-    Technology: { color: "#00B4D8", bg: "#00B4D8", label: "💻", svg: '<rect x="2" y="3" width="20" height="14" rx="2"/>' },
-    "World Events": { color: "#a855f7", bg: "#a855f7", label: "🌍", svg: '<circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>' },
-    Science: { color: "#06b6d4", bg: "#06b6d4", label: "🔬", svg: '<path d="M14.5 2v17.5c0 1.4-1.1 2.5-2.5 2.5h0c-1.4 0-2.5-1.1-2.5-2.5V2"/>' },
+    Technology: { color: "#00B4D8", bg: "#00B4D8", label: "💻", svg: '<rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>' },
+    "World Events": { color: "#a855f7", bg: "#a855f7", label: "🌍", svg: '<circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>' },
+    Science: { color: "#06b6d4", bg: "#06b6d4", label: "🔬", svg: '<path d="M9 3h6v8l4 7H5l4-7V3z"/><line x1="9" y1="3" x2="15" y2="3"/>' },
     Climate: { color: "#22c55e", bg: "#22c55e", label: "🌿", svg: '<path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/>' },
-    Health: { color: "#ec4899", bg: "#ec4899", label: "♥", svg: '<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>' },
+    Health: { color: "#ec4899", bg: "#ec4899", label: "♥", svg: '<rect x="8" y="2" width="8" height="20" rx="1"/><rect x="2" y="8" width="20" height="8" rx="1"/>' },
   };
   return cats[category] || { color: "#00B4D8", bg: "#00B4D8", label: "?", svg: '<circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/>' };
 };
+
 
 export default function Feed() {
   const navigate = useNavigate();
