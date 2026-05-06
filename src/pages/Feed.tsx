@@ -220,7 +220,7 @@ export default function Feed() {
     try {
       let query = supabase
         .from("predictions")
-        .select("id, question, category, confidence, resolution_date, status, created_at")
+        .select("id, question, category, confidence, resolution_date, status, created_at, image_url")
         .eq("status", "open")
         .order("created_at", { ascending: false });
       if (category !== "All") query = query.eq("category", category);
@@ -283,24 +283,31 @@ export default function Feed() {
                   onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-3px)"; e.currentTarget.style.borderColor = theme.color + "50"; e.currentTarget.style.boxShadow = `0 12px 40px ${theme.color}15`; }}
                   onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.borderColor = "#1a3050"; e.currentTarget.style.boxShadow = "none"; }}>
 
-                  {/* Colored header */}
-                  <div style={{ background: `${theme.color}14`, borderBottom: `1px solid ${theme.color}20`, padding: "20px", display: "flex", justifyContent: "space-between", alignItems: "center", position: "relative", overflow: "hidden" }}>
-                    {/* BG decoration */}
-                    <div style={{ position: "absolute", right: "-20px", top: "-20px", width: "90px", height: "90px", borderRadius: "50%", background: `${theme.color}10`, border: `1px solid ${theme.color}15` }}/>
-
-                    {/* Icon square */}
-                    <div style={{ width: "60px", height: "60px", borderRadius: "16px", background: `${theme.color}22`, border: `1.5px solid ${theme.color}45`, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", zIndex: 1, flexShrink: 0 }}>
-                      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke={theme.color} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" dangerouslySetInnerHTML={{ __html: theme.svg }}/>
-                    </div>
-
-                    {/* Confidence */}
-                    <div style={{ textAlign: "right", position: "relative", zIndex: 1 }}>
-                      <div style={{ fontSize: "42px", fontWeight: 900, lineHeight: 1, color: confColor }}>
-                        {p.confidence}%
+                  {/* Header — image if available, else colored icon */}
+                  {p.image_url ? (
+                    <div style={{ position: "relative", height: "140px", overflow: "hidden" }}>
+                      <img src={p.image_url} alt={p.category} style={{ width: "100%", height: "100%", objectFit: "cover" }}/>
+                      <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, transparent 30%, #0d1f35 100%)" }}/>
+                      <div style={{ position: "absolute", top: "12px", left: "12px", background: `${theme.color}90`, border: `1px solid ${theme.color}`, backdropFilter: "blur(4px)", color: "#fff", padding: "3px 10px", borderRadius: "20px", fontSize: "10px", fontWeight: 700 }}>
+                        {p.category}
                       </div>
-                      <div style={{ fontSize: "10px", color: "#6b7f99", fontWeight: 600, marginTop: "3px", letterSpacing: "1px" }}>YES PROB</div>
+                      <div style={{ position: "absolute", bottom: "12px", right: "12px", textAlign: "right" }}>
+                        <div style={{ fontSize: "38px", fontWeight: 900, lineHeight: 1, color: confColor, textShadow: "0 2px 8px rgba(0,0,0,0.8)" }}>{p.confidence}%</div>
+                        <div style={{ fontSize: "10px", color: "rgba(255,255,255,0.7)", fontWeight: 600, letterSpacing: "1px" }}>YES PROB</div>
+                      </div>
                     </div>
-                  </div>
+                  ) : (
+                    <div style={{ background: `${theme.color}14`, borderBottom: `1px solid ${theme.color}20`, padding: "20px", display: "flex", justifyContent: "space-between", alignItems: "center", position: "relative", overflow: "hidden" }}>
+                      <div style={{ position: "absolute", right: "-20px", top: "-20px", width: "90px", height: "90px", borderRadius: "50%", background: `${theme.color}10`, border: `1px solid ${theme.color}15` }}/>
+                      <div style={{ width: "60px", height: "60px", borderRadius: "16px", background: `${theme.color}22`, border: `1.5px solid ${theme.color}45`, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", zIndex: 1, flexShrink: 0 }}>
+                        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke={theme.color} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" dangerouslySetInnerHTML={{ __html: theme.svg }}/>
+                      </div>
+                      <div style={{ textAlign: "right", position: "relative", zIndex: 1 }}>
+                        <div style={{ fontSize: "42px", fontWeight: 900, lineHeight: 1, color: confColor }}>{p.confidence}%</div>
+                        <div style={{ fontSize: "10px", color: "#6b7f99", fontWeight: 600, marginTop: "3px", letterSpacing: "1px" }}>YES PROB</div>
+                      </div>
+                    </div>
+                  )}
 
                   {/* Content */}
                   <div style={{ padding: "16px 20px" }}>
