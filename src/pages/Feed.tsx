@@ -290,7 +290,7 @@ export default function Feed() {
 
                     {/* Icon square */}
                     <div style={{ width: "60px", height: "60px", borderRadius: "16px", background: `${theme.color}22`, border: `1.5px solid ${theme.color}45`, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", zIndex: 1, flexShrink: 0 }}>
-                      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke={theme.color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" dangerouslySetInnerHTML={{ __html: `<defs><filter id="glow"><feGaussianBlur stdDeviation="1" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><g filter="url(#glow)">${theme.svg}</g>` }}/>
+                      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke={theme.color} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" dangerouslySetInnerHTML={{ __html: theme.svg }}/>
                     </div>
 
                     {/* Confidence */}
