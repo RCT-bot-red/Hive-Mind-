@@ -13,84 +13,36 @@ export default function Tournament() {
   const [loading, setLoading] = useState(true);
   const [tournamentId, setTournamentId] = useState<string | null>(null);
 
-  // Tournament ends last day of May 2026
   const TOURNAMENT_END = new Date("2026-06-01T00:00:00Z");
-  const TOURNAMENT_NAME = "May 2026 Tournament";
   const PRIZE_POOL = 500;
 
   useEffect(() => {
     fetchData();
     const timer = setInterval(() => {
       const diff = TOURNAMENT_END.getTime() - Date.now();
-      if (diff > 0) {
-        setTimeLeft({
-          days: Math.floor(diff / 86400000),
-          hours: Math.floor((diff / 3600000) % 24),
-          minutes: Math.floor((diff / 60000) % 60),
-          seconds: Math.floor((diff / 1000) % 60),
-        });
-      }
+      if (diff > 0) setTimeLeft({ days: Math.floor(diff / 86400000), hours: Math.floor((diff / 3600000) % 24), minutes: Math.floor((diff / 60000) % 60), seconds: Math.floor((diff / 1000) % 60) });
     }, 1000);
     return () => clearInterval(timer);
   }, []);
 
   const fetchData = async () => {
     setLoading(true);
-
-    // Get or create the May 2026 tournament
-    let { data: tournament } = await supabase
-      .from("tournaments")
-      .select("id")
-      .eq("name", "May 2026 Tournament")
-      .single();
-    
+    let { data: tournament } = await supabase.from("tournaments").select("id").eq("name", "May 2026 Tournament").single();
     if (!tournament) {
-      const { data: newT } = await supabase
-        .from("tournaments")
-        .insert({ name: "May 2026 Tournament", start_date: "2026-05-01", end_date: "2026-06-01", prize_pool: 500, status: "active" })
-        .select("id")
-        .single();
+      const { data: newT } = await supabase.from("tournaments").insert({ name: "May 2026 Tournament", start_date: "2026-05-01", end_date: "2026-06-01", prize_pool: 500, status: "active" }).select("id").single();
       tournament = newT;
     }
-    
     if (tournament) setTournamentId(tournament.id);
-
-    // Participants count
-    const { count } = await supabase
-      .from("tournament_entries")
-      .select("*", { count: "exact", head: true })
-      .eq("tournament_id", tournament?.id || "");
+    const { count } = await supabase.from("tournament_entries").select("*", { count: "exact", head: true }).eq("tournament_id", tournament?.id || "");
     setParticipants(count || 0);
-
-    // Top forecasters (leaderboard for this month)
-    const { data: leaders } = await supabase
-      .from("users")
-      .select("id, username, accuracy_score, correct_predictions, resolved_predictions, total_predictions")
-      .gt("total_predictions", 0)
-      .order("accuracy_score", { ascending: false })
-      .limit(10);
+    const { data: leaders } = await supabase.from("users").select("id, username, accuracy_score, correct_predictions, resolved_predictions, total_predictions").gt("total_predictions", 0).order("accuracy_score", { ascending: false }).limit(10);
     setLeaderboard(leaders || []);
-
-    // Check if current user is joined
     const { data: { user } } = await supabase.auth.getUser();
     if (user) {
-      // Upsert user record if not exists
       let { data: u } = await supabase.from("users").select("id").eq("email", user.email).single();
-      if (!u) {
-        const { data: newU } = await supabase.from("users")
-          .upsert({ email: user.email, username: user.email.split("@")[0] }, { onConflict: "email" })
-          .select("id").single();
-        u = newU;
-      }
+      if (!u) { const { data: newU } = await supabase.from("users").upsert({ email: user.email, username: user.email.split("@")[0] }, { onConflict: "email" }).select("id").single(); u = newU; }
       setCurrentUser(u);
-      if (u) {
-        const { data: entry } = await supabase
-          .from("tournament_entries")
-          .select("id")
-          .eq("user_id", u.id)
-          .single();
-        setIsJoined(!!entry);
-      }
+      if (u) { const { data: entry } = await supabase.from("tournament_entries").select("id").eq("user_id", u.id).single(); setIsJoined(!!entry); }
     }
     setLoading(false);
   };
@@ -98,212 +50,221 @@ export default function Tournament() {
   const handleJoin = async () => {
     if (!currentUser) { navigate("/auth"); return; }
     setJoining(true);
-    // Try insert with tournament_id
-    const { error } = await supabase.from("tournament_entries")
-      .insert({ user_id: currentUser.id, tournament_id: tournamentId });
-    if (!error || error.code === "23505") {
-      setIsJoined(true);
-      setParticipants(p => p + 1);
-    } else {
-      console.error("Join error:", error);
-    }
+    const { error } = await supabase.from("tournament_entries").insert({ user_id: currentUser.id, tournament_id: tournamentId });
+    if (!error || error.code === "23505") { setIsJoined(true); setParticipants(p => p + 1); }
     setJoining(false);
   };
 
-  const prizes = [
-    { place: "1st", pct: 50, icon: "1", color: "#ffd700", bg: "#ffd70015", border: "#ffd70040" },
-    { place: "2nd", pct: 20, icon: "2", color: "#c0c0c0", bg: "#c0c0c015", border: "#c0c0c040" },
-    { place: "3rd", pct: 10, icon: "3", color: "#cd7f32", bg: "#cd7f3215", border: "#cd7f3240" },
-  ];
-
-  const getRank = (i: number) => {
-    if (i === 0) return { symbol: "1", color: "#ffd700" };
-    if (i === 1) return { symbol: "2", color: "#c0c0c0" };
-    if (i === 2) return { symbol: "3", color: "#cd7f32" };
-    return { symbol: `${i + 1}`, color: "#6b7f99" };
-  };
+  const accColor = (s: number) => s >= 70 ? "#00ff88" : s >= 50 ? "#00B4D8" : "#6b7f99";
+  const top3 = leaderboard.slice(0, 3);
+  const rest = leaderboard.slice(3);
 
   return (
-    <div style={{ backgroundColor: "#0a1628", minHeight: "100vh", padding: "40px 24px" }}>
-      <div style={{ maxWidth: "860px", margin: "0 auto" }}>
+    <div style={{ backgroundColor: "#0a1628", minHeight: "100vh" }}>
 
-        {/* Header */}
-        <div style={{ textAlign: "center", marginBottom: "48px" }}>
-          <span style={{ background: "#00B4D815", border: "1px solid #00B4D840", color: "#00B4D8", padding: "6px 16px", borderRadius: "20px", fontSize: "12px", fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase" }}>
-            🏆 MAY 2026
-          </span>
-          <h1 style={{ fontSize: "48px", fontWeight: 900, margin: "16px 0 8px", letterSpacing: "-1px", lineHeight: 1.1 }}>
-            Monthly Tournament
+      {/* HERO BANNER */}
+      <div style={{ background: "linear-gradient(180deg, #0d2040 0%, #0a1628 100%)", borderBottom: "1px solid #1a3050", padding: "56px 24px 48px", textAlign: "center", position: "relative", overflow: "hidden" }}>
+        {/* Background decoration */}
+        <div style={{ position: "absolute", top: "-60px", left: "50%", transform: "translateX(-50%)", width: "600px", height: "300px", background: "radial-gradient(ellipse, #00B4D808 0%, transparent 70%)", pointerEvents: "none" }}/>
+
+        <div style={{ position: "relative", zIndex: 1 }}>
+          <div style={{ display: "inline-flex", alignItems: "center", gap: "8px", background: "#00B4D815", border: "1px solid #00B4D840", color: "#00B4D8", padding: "6px 16px", borderRadius: "20px", fontSize: "12px", fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", marginBottom: "20px" }}>
+            <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#00ff88", animation: "pulse 2s infinite" }}/>
+            LIVE — MAY 2026
+          </div>
+
+          <h1 style={{ fontSize: "clamp(36px, 6vw, 64px)", fontWeight: 900, margin: "0 0 12px", letterSpacing: "-2px", lineHeight: 1.05 }}>
+            Monthly<br/>
+            <span style={{ background: "linear-gradient(135deg, #00B4D8, #00ff88)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Tournament</span>
           </h1>
-          <p style={{ color: "#6b7f99", fontSize: "16px", maxWidth: "500px", margin: "0 auto" }}>
-            Most accurate forecaster wins. All predictions made in May count toward your score.
+
+          <p style={{ color: "#6b7f99", fontSize: "16px", maxWidth: "460px", margin: "0 auto 36px", lineHeight: 1.6 }}>
+            The most accurate forecaster wins. Every prediction you make in May counts.
           </p>
-        </div>
 
-        {/* Countdown + Prize Pool */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "24px" }}>
+          {/* 3 key stats */}
+          <div style={{ display: "flex", justifyContent: "center", gap: "48px", flexWrap: "wrap", marginBottom: "36px" }}>
+            {[
+              { label: "Prize Pool", value: `$${PRIZE_POOL}`, color: "#00ff88" },
+              { label: "Participants", value: participants.toString(), color: "#00B4D8" },
+              { label: "Days Left", value: String(timeLeft.days), color: "#ffd700" },
+            ].map(s => (
+              <div key={s.label} style={{ textAlign: "center" }}>
+                <div style={{ fontSize: "40px", fontWeight: 900, color: s.color, lineHeight: 1 }}>{s.value}</div>
+                <div style={{ fontSize: "12px", color: "#6b7f99", fontWeight: 600, marginTop: "4px", letterSpacing: "1px", textTransform: "uppercase" }}>{s.label}</div>
+              </div>
+            ))}
+          </div>
 
-          {/* Countdown */}
-          <div style={{ background: "#0d1f35", border: "1px solid #1a3050", borderRadius: "16px", padding: "28px" }}>
-            <div style={{ fontSize: "11px", color: "#6b7f99", fontWeight: 700, textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: "16px" }}>
-              Time Remaining
+          {/* CTA */}
+          {isJoined ? (
+            <div style={{ display: "inline-flex", alignItems: "center", gap: "10px", background: "#00ff8815", border: "1px solid #00ff8840", color: "#00ff88", padding: "14px 28px", borderRadius: "12px", fontSize: "15px", fontWeight: 700 }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Registered — Go make predictions!
             </div>
-            <div style={{ display: "flex", gap: "8px", alignItems: "flex-end" }}>
-              {[
-                { value: timeLeft.days, label: "d" },
-                { value: timeLeft.hours, label: "h" },
-                { value: timeLeft.minutes, label: "m" },
-                { value: timeLeft.seconds, label: "s" },
-              ].map((t, i) => (
-                <div key={i} style={{ display: "flex", alignItems: "baseline", gap: "2px" }}>
-                  {i > 0 && <span style={{ color: "#1a3050", fontSize: "20px", marginBottom: "4px", marginRight: "2px" }}>:</span>}
-                  <span style={{ fontSize: "36px", fontWeight: 900, color: "#ffffff", lineHeight: 1 }}>
-                    {String(t.value).padStart(2, "0")}
-                  </span>
-                  <span style={{ fontSize: "13px", color: "#00B4D8", fontWeight: 700, marginBottom: "2px" }}>{t.label}</span>
+          ) : (
+            <button onClick={handleJoin} disabled={joining} style={{ background: "linear-gradient(135deg, #00B4D8, #0077B6)", border: "none", color: "#fff", padding: "16px 48px", borderRadius: "12px", fontSize: "16px", fontWeight: 900, cursor: "pointer", boxShadow: "0 8px 32px #00B4D830" }}>
+              {joining ? "Joining..." : "Join Tournament — Free"}
+            </button>
+          )}
+          <div style={{ marginTop: "10px", fontSize: "13px", color: "#3a5070" }}>
+            Free entry · <Link to="/feed" style={{ color: "#00B4D8" }}>Start predicting</Link> to compete
+          </div>
+        </div>
+      </div>
+
+      <div style={{ maxWidth: "860px", margin: "0 auto", padding: "40px 24px 80px" }}>
+
+        {/* COUNTDOWN + PRIZE breakdown */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "32px" }}>
+          {/* Countdown */}
+          <div style={{ background: "#0d1f35", border: "1px solid #1a3050", borderRadius: "16px", padding: "24px" }}>
+            <div style={{ fontSize: "11px", color: "#6b7f99", fontWeight: 700, textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: "16px" }}>Time Remaining</div>
+            <div style={{ display: "flex", gap: "4px", alignItems: "flex-end" }}>
+              {[{ v: timeLeft.days, l: "D" }, { v: timeLeft.hours, l: "H" }, { v: timeLeft.minutes, l: "M" }, { v: timeLeft.seconds, l: "S" }].map((t, i) => (
+                <div key={i} style={{ display: "flex", alignItems: "baseline", gap: "1px" }}>
+                  {i > 0 && <span style={{ color: "#1a3050", fontSize: "24px", margin: "0 2px 4px" }}>:</span>}
+                  <div style={{ background: "#0a1628", border: "1px solid #1a3050", borderRadius: "8px", padding: "8px 10px", textAlign: "center", minWidth: "52px" }}>
+                    <div style={{ fontSize: "32px", fontWeight: 900, color: "#fff", lineHeight: 1 }}>{String(t.v).padStart(2, "0")}</div>
+                    <div style={{ fontSize: "10px", color: "#00B4D8", fontWeight: 700, marginTop: "2px" }}>{t.l}</div>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Prize Pool */}
-          <div style={{ background: "linear-gradient(135deg, #0d1f35, #091525)", border: "1px solid #1a3050", borderTop: "3px solid #00ff88", borderRadius: "16px", padding: "28px" }}>
-            <div style={{ fontSize: "11px", color: "#6b7f99", fontWeight: 700, textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: "16px" }}>
-              Prize Pool
-            </div>
-            <div style={{ fontSize: "52px", fontWeight: 900, color: "#00ff88", lineHeight: 1, marginBottom: "8px" }}>
-              ${PRIZE_POOL}
-            </div>
-            <div style={{ fontSize: "13px", color: "#6b7f99" }}>
-              {participants} participant{participants !== 1 ? "s" : ""} registered
+          {/* Prize breakdown */}
+          <div style={{ background: "#0d1f35", border: "1px solid #1a3050", borderRadius: "16px", padding: "24px" }}>
+            <div style={{ fontSize: "11px", color: "#6b7f99", fontWeight: 700, textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: "16px" }}>Prize Breakdown</div>
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+              {[{ place: "1st", pct: 50, color: "#ffd700" }, { place: "2nd", pct: 20, color: "#c0c0c0" }, { place: "3rd", pct: 10, color: "#cd7f32" }].map(p => (
+                <div key={p.place} style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                  <span style={{ fontSize: "12px", fontWeight: 700, color: p.color, minWidth: "28px" }}>{p.place}</span>
+                  <div style={{ flex: 1, background: "#0a1628", borderRadius: "4px", height: "6px", overflow: "hidden" }}>
+                    <div style={{ background: p.color, width: `${p.pct * 2}%`, height: "100%", borderRadius: "4px" }}/>
+                  </div>
+                  <span style={{ fontSize: "15px", fontWeight: 900, color: p.color, minWidth: "48px", textAlign: "right" }}>${Math.round(PRIZE_POOL * p.pct / 100)}</span>
+                </div>
+              ))}
             </div>
           </div>
         </div>
 
-        {/* Prize breakdown */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "12px", marginBottom: "24px" }}>
-          {prizes.map(p => (
-            <div key={p.place} style={{ background: p.bg, border: `1px solid ${p.border}`, borderRadius: "14px", padding: "20px", textAlign: "center" }}>
-              <div style={{ width:"40px",height:"40px",borderRadius:"50%",background:p.bg,border:`1px solid ${p.border}`,display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 12px",fontSize:"18px",fontWeight:900,color:p.color }}>{p.icon}</div>
-              <div style={{ fontSize: "13px", color: p.color, fontWeight: 700, marginBottom: "4px" }}>{p.place} Place</div>
-              <div style={{ fontSize: "24px", fontWeight: 900, color: p.color }}>${Math.round(PRIZE_POOL * p.pct / 100)}</div>
-              <div style={{ fontSize: "12px", color: "#6b7f99", marginTop: "2px" }}>{p.pct}% of pool</div>
-            </div>
-          ))}
-        </div>
-
-        {/* Join button */}
-        <div style={{ marginBottom: "40px", textAlign: "center" }}>
-          {isJoined ? (
-            <div style={{ display: "inline-flex", alignItems: "center", gap: "8px", background: "#00ff8815", border: "1px solid #00ff8840", color: "#00ff88", padding: "14px 32px", borderRadius: "12px", fontSize: "15px", fontWeight: 700 }}>
-              ✓ You're registered for this tournament
-            </div>
-          ) : (
-            <button
-              onClick={handleJoin}
-              disabled={joining}
-              style={{ background: "#00B4D8", border: "none", color: "#000", padding: "16px 48px", borderRadius: "12px", fontSize: "16px", fontWeight: 900, cursor: "pointer", opacity: joining ? 0.7 : 1 }}
-            >
-              {joining ? "Joining..." : "Join Tournament — Free"}
-            </button>
-          )}
-          <p style={{ color: "#6b7f99", fontSize: "13px", marginTop: "12px" }}>
-            Free to enter. Start making predictions in the{" "}
-            <Link to="/feed" style={{ color: "#00B4D8" }}>Feed</Link> to compete.
-          </p>
-        </div>
-
-        {/* Leaderboard */}
-        <div>
-          <h2 style={{ fontSize: "22px", fontWeight: 900, marginBottom: "20px" }}>
-            Current Standings
-          </h2>
+        {/* STANDINGS */}
+        <div style={{ marginBottom: "32px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+            <h2 style={{ fontSize: "22px", fontWeight: 900, margin: 0 }}>Current Standings</h2>
+            <span style={{ fontSize: "13px", color: "#3a5070" }}>Updated live</span>
+          </div>
 
           {loading ? (
-            <div style={{ textAlign: "center", color: "#6b7f99", padding: "40px" }}>Loading standings...</div>
+            <div style={{ textAlign: "center", color: "#6b7f99", padding: "40px" }}>Loading...</div>
           ) : leaderboard.length === 0 ? (
-            <div style={{ textAlign: "center", padding: "60px", background: "#0d1f35", borderRadius: "16px", border: "1px solid #1a3050", color: "#6b7f99" }}>
-              <div style={{ fontSize: "40px", marginBottom: "12px" }}>🏆</div>
+            <div style={{ textAlign: "center", padding: "60px", background: "#0d1f35", borderRadius: "16px", border: "1px solid #1a3050" }}>
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#1a3050" strokeWidth="1.5" strokeLinecap="round" style={{ margin: "0 auto 14px", display: "block" }}>
+                <polyline points="8 21 12 17 16 21"/><line x1="12" y1="17" x2="12" y2="11"/>
+                <path d="M7 4H4a2 2 0 0 0-2 2v2c0 3.31 2.69 6 6 6h8c3.31 0 6-2.69 6-6V6a2 2 0 0 0-2-2h-3"/>
+                <rect x="7" y="2" width="10" height="9" rx="2"/>
+              </svg>
               <div style={{ fontSize: "16px", fontWeight: 700, color: "#fff", marginBottom: "8px" }}>No standings yet</div>
-              <div>Be the first to make predictions and claim the top spot!</div>
+              <div style={{ color: "#6b7f99", marginBottom: "20px" }}>Be the first to make predictions and claim the #1 spot</div>
+              <Link to="/feed" style={{ background: "#00B4D8", color: "#000", padding: "12px 28px", borderRadius: "10px", fontWeight: 700, textDecoration: "none" }}>Start Predicting →</Link>
             </div>
           ) : (
-            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-              {leaderboard.map((user, i) => {
-                const rank = getRank(i);
-                const prizeAmt = i === 0 ? PRIZE_POOL * 0.5 : i === 1 ? PRIZE_POOL * 0.2 : i === 2 ? PRIZE_POOL * 0.1 : null;
-                return (
-                  <Link to={`/profile/${user.username}`} key={user.id} style={{ textDecoration: "none" }}>
-                    <div style={{
-                      background: i < 3 ? "linear-gradient(135deg, #0d1f35, #091525)" : "#0d1f35",
-                      border: `1px solid ${i === 0 ? "#ffd70040" : i === 1 ? "#c0c0c040" : i === 2 ? "#cd7f3240" : "#1a3050"}`,
-                      borderRadius: "14px", padding: "16px 22px",
-                      display: "flex", alignItems: "center", gap: "14px",
-                      transition: "border-color 0.2s",
-                    }}>
-                      {/* Rank */}
-                      <div style={{ minWidth:"40px",height:"40px",borderRadius:"50%",background:i<3?"rgba(255,255,255,0.05)":"transparent",border:`1px solid ${rank.color}30`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"15px",fontWeight:900,color:rank.color,flexShrink:0 }}>
-                        {rank.symbol}
+            <>
+              {/* TOP 3 PODIUM */}
+              {top3.length > 0 && (
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1.15fr 1fr", gap: "10px", marginBottom: "12px", alignItems: "flex-end" }}>
+                  {/* 2nd */}
+                  {top3[1] ? (
+                    <Link to={`/profile/${top3[1].username}`} style={{ textDecoration: "none" }}>
+                      <div style={{ background: "#0d1f35", border: "1px solid #c0c0c030", borderRadius: "14px 14px 0 0", padding: "20px 16px 22px", textAlign: "center", borderBottom: "3px solid #c0c0c0" }}>
+                        <div style={{ width: "44px", height: "44px", borderRadius: "50%", background: "#c0c0c020", border: "2px solid #c0c0c050", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 10px", fontSize: "18px", fontWeight: 900, color: "#c0c0c0" }}>{top3[1].username?.[0]?.toUpperCase()}</div>
+                        <div style={{ fontSize: "13px", fontWeight: 700, color: "#fff", marginBottom: "4px" }}>{top3[1].username}</div>
+                        <div style={{ fontSize: "28px", fontWeight: 900, color: "#c0c0c0" }}>{Math.round(top3[1].accuracy_score || 0)}%</div>
+                        <div style={{ fontSize: "11px", color: "#6b7f99" }}>{top3[1].resolved_predictions || 0} resolved</div>
+                        <div style={{ marginTop: "8px", fontSize: "13px", fontWeight: 700, color: "#c0c0c0" }}>$100</div>
+                        <div style={{ fontSize: "10px", color: "#c0c0c0", fontWeight: 700, marginTop: "6px", letterSpacing: "1px" }}>2ND</div>
                       </div>
+                    </Link>
+                  ) : <div/>}
 
-                      {/* Avatar */}
-                      <div style={{ width: "38px", height: "38px", borderRadius: "50%", background: "linear-gradient(135deg, #00B4D8, #0077B6)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "15px", fontWeight: 900, color: "#fff", flexShrink: 0 }}>
-                        {user.username?.[0]?.toUpperCase()}
+                  {/* 1st */}
+                  {top3[0] && (
+                    <Link to={`/profile/${top3[0].username}`} style={{ textDecoration: "none" }}>
+                      <div style={{ background: "linear-gradient(180deg, #1a1500 0%, #0d1f35 100%)", border: "1px solid #ffd70050", borderRadius: "14px 14px 0 0", padding: "28px 16px 22px", textAlign: "center", borderBottom: "3px solid #ffd700", position: "relative" }}>
+                        <div style={{ position: "absolute", top: "-10px", left: "50%", transform: "translateX(-50%)", background: "#ffd700", color: "#000", fontSize: "10px", fontWeight: 900, padding: "3px 12px", borderRadius: "20px", letterSpacing: "1px" }}>LEADER</div>
+                        <div style={{ width: "52px", height: "52px", borderRadius: "50%", background: "#ffd70020", border: "2px solid #ffd700", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 10px", fontSize: "22px", fontWeight: 900, color: "#ffd700" }}>{top3[0].username?.[0]?.toUpperCase()}</div>
+                        <div style={{ fontSize: "14px", fontWeight: 700, color: "#fff", marginBottom: "4px" }}>{top3[0].username}</div>
+                        <div style={{ fontSize: "36px", fontWeight: 900, color: "#ffd700" }}>{Math.round(top3[0].accuracy_score || 0)}%</div>
+                        <div style={{ fontSize: "11px", color: "#6b7f99" }}>{top3[0].resolved_predictions || 0} resolved</div>
+                        <div style={{ marginTop: "8px", fontSize: "15px", fontWeight: 700, color: "#ffd700" }}>$250</div>
+                        <div style={{ fontSize: "10px", color: "#ffd700", fontWeight: 700, marginTop: "6px", letterSpacing: "1px" }}>1ST</div>
                       </div>
+                    </Link>
+                  )}
 
-                      {/* Info */}
-                      <div style={{ flex: 1 }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                          <span style={{ fontSize: "15px", fontWeight: 700, color: "#fff" }}>{user.username}</span>
-                          {i === 0 && <span style={{ background: "#ffd70020", border: "1px solid #ffd700", color: "#ffd700", fontSize: "10px", fontWeight: 700, padding: "2px 8px", borderRadius: "8px" }}>LEADER</span>}
-                        </div>
-                        <div style={{ fontSize: "12px", color: "#6b7f99", marginTop: "2px" }}>
-                          {user.resolved_predictions || 0} resolved · {user.total_predictions || 0} total
-                        </div>
+                  {/* 3rd */}
+                  {top3[2] ? (
+                    <Link to={`/profile/${top3[2].username}`} style={{ textDecoration: "none" }}>
+                      <div style={{ background: "#0d1f35", border: "1px solid #cd7f3230", borderRadius: "14px 14px 0 0", padding: "16px 16px 22px", textAlign: "center", borderBottom: "3px solid #cd7f32" }}>
+                        <div style={{ width: "40px", height: "40px", borderRadius: "50%", background: "#cd7f3220", border: "2px solid #cd7f3250", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 10px", fontSize: "16px", fontWeight: 900, color: "#cd7f32" }}>{top3[2].username?.[0]?.toUpperCase()}</div>
+                        <div style={{ fontSize: "13px", fontWeight: 700, color: "#fff", marginBottom: "4px" }}>{top3[2].username}</div>
+                        <div style={{ fontSize: "26px", fontWeight: 900, color: "#cd7f32" }}>{Math.round(top3[2].accuracy_score || 0)}%</div>
+                        <div style={{ fontSize: "11px", color: "#6b7f99" }}>{top3[2].resolved_predictions || 0} resolved</div>
+                        <div style={{ marginTop: "8px", fontSize: "13px", fontWeight: 700, color: "#cd7f32" }}>$50</div>
+                        <div style={{ fontSize: "10px", color: "#cd7f32", fontWeight: 700, marginTop: "6px", letterSpacing: "1px" }}>3RD</div>
                       </div>
+                    </Link>
+                  ) : <div/>}
+                </div>
+              )}
 
-                      {/* Prize */}
-                      {prizeAmt && (
-                        <div style={{ textAlign: "center", marginRight: "8px" }}>
-                          <div style={{ fontSize: "10px", color: "#6b7f99", marginBottom: "2px" }}>PRIZE</div>
-                          <div style={{ fontSize: "14px", fontWeight: 700, color: rank.color }}>${prizeAmt}</div>
+              {/* REST OF LEADERBOARD */}
+              {rest.length > 0 && (
+                <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                  {rest.map((user, idx) => {
+                    const i = idx + 3;
+                    return (
+                      <Link to={`/profile/${user.username}`} key={user.id} style={{ textDecoration: "none" }}>
+                        <div style={{ background: "#0d1f35", border: "1px solid #1a3050", borderRadius: "12px", padding: "14px 18px", display: "flex", alignItems: "center", gap: "12px", transition: "border-color 0.15s" }}
+                          onMouseEnter={e => e.currentTarget.style.borderColor = "#00B4D840"}
+                          onMouseLeave={e => e.currentTarget.style.borderColor = "#1a3050"}>
+                          <div style={{ width: "30px", height: "30px", borderRadius: "50%", border: "1px solid #1a3050", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "12px", fontWeight: 700, color: "#3a5070", flexShrink: 0 }}>{i + 1}</div>
+                          <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "linear-gradient(135deg, #00B4D8, #0077B6)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "13px", fontWeight: 900, color: "#fff", flexShrink: 0 }}>{user.username?.[0]?.toUpperCase()}</div>
+                          <div style={{ flex: 1 }}>
+                            <div style={{ fontSize: "14px", fontWeight: 700, color: "#fff" }}>{user.username}</div>
+                            <div style={{ fontSize: "11px", color: "#3a5070" }}>{user.resolved_predictions || 0} resolved</div>
+                          </div>
+                          <div style={{ fontSize: "22px", fontWeight: 900, color: accColor(user.accuracy_score || 0) }}>{Math.round(user.accuracy_score || 0)}%</div>
                         </div>
-                      )}
-
-                      {/* Accuracy */}
-                      <div style={{ textAlign: "right", minWidth: "70px" }}>
-                        <div style={{ fontSize: "26px", fontWeight: 900, color: (user.accuracy_score || 0) >= 70 ? "#00ff88" : (user.accuracy_score || 0) >= 50 ? "#00B4D8" : "#6b7f99" }}>
-                          {Math.round(user.accuracy_score || 0)}%
-                        </div>
-                        <div style={{ fontSize: "11px", color: "#6b7f99" }}>accuracy</div>
-                      </div>
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
+            </>
           )}
         </div>
 
-        {/* Rules */}
-        <div style={{ marginTop: "40px", background: "#0d1f35", border: "1px solid #1a3050", borderRadius: "16px", padding: "28px" }}>
-          <h3 style={{ fontSize: "16px", fontWeight: 700, marginBottom: "16px", color: "#ffffff" }}>Tournament Rules</h3>
-          <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+        {/* RULES */}
+        <div style={{ background: "#0d1f35", border: "1px solid #1a3050", borderRadius: "16px", padding: "28px" }}>
+          <h3 style={{ fontSize: "16px", fontWeight: 700, marginBottom: "18px" }}>Tournament Rules</h3>
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
             {[
-              "All predictions made in May 2026 count toward your accuracy score",
-              "Accuracy = correct predictions ÷ total resolved predictions × 100",
-              "Minimum 3 resolved predictions required to qualify for prizes",
-              "Prize pool distributed to top 3 forecasters at end of month",
-              "Ties broken by number of total resolved predictions",
+              { icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>, text: "All predictions made in May 2026 count toward your accuracy score" },
+              { icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>, text: "Accuracy = correct predictions ÷ total resolved predictions × 100" },
+              { icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>, text: "Minimum 3 resolved predictions required to qualify for prizes" },
+              { icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="8 21 12 17 16 21"/><line x1="12" y1="17" x2="12" y2="11"/><rect x="7" y="2" width="10" height="9" rx="2"/></svg>, text: "Prize pool distributed to top 3 forecasters at end of month" },
+              { icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>, text: "Ties broken by number of total resolved predictions" },
             ].map((rule, i) => (
-              <div key={i} style={{ display: "flex", gap: "10px", alignItems: "flex-start" }}>
-                <span style={{ color: "#00B4D8", fontWeight: 700, fontSize: "13px", flexShrink: 0 }}>0{i + 1}</span>
-                <span style={{ color: "#8899aa", fontSize: "14px", lineHeight: 1.5 }}>{rule}</span>
+              <div key={i} style={{ display: "flex", gap: "12px", alignItems: "flex-start" }}>
+                <div style={{ color: "#00B4D8", flexShrink: 0, marginTop: "2px" }}>{rule.icon}</div>
+                <span style={{ color: "#8899aa", fontSize: "14px", lineHeight: 1.6 }}>{rule.text}</span>
               </div>
             ))}
           </div>
         </div>
-
       </div>
     </div>
   );
