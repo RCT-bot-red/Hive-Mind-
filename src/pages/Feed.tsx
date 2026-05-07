@@ -299,11 +299,11 @@ export default function Feed() {
           </div>
           {/* Sort dropdown */}
           <select value={sort} onChange={e => setSort(e.target.value)} style={{ background: "#0d1f35", border: "1px solid #1a3050", borderRadius: "10px", padding: "8px 14px", color: "#8899aa", fontSize: "13px", fontWeight: 700, cursor: "pointer", outline: "none" }}>
-            <option value="newest">🕐 Newest</option>
-            <option value="oldest">🕐 Oldest</option>
-            <option value="highest">📈 Highest %</option>
-            <option value="lowest">📉 Lowest %</option>
-            <option value="ending">⏰ Ending soon</option>
+            <option value="newest">Sort: Newest first</option>
+            <option value="oldest">Sort: Oldest first</option>
+            <option value="highest">Sort: Highest probability</option>
+            <option value="lowest">Sort: Lowest probability</option>
+            <option value="ending">Sort: Ending soon</option>
           </select>
         </div>
 
