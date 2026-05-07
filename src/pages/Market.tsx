@@ -207,10 +207,10 @@ export default function Market() {
           <h1 style={{ fontSize: 'clamp(20px,3vw,28px)', fontWeight: 900, margin: 0, lineHeight: 1.3, color: '#ffffff' }}>{pred.question}</h1>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: '24px', alignItems: 'start' }}>
+        <div className='market-grid' style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: '24px', alignItems: 'start' }}>
 
           {/* LEFT */}
-          <div>
+          <div className='market-left'>
             {/* Community prob */}
             <div style={{ background: '#0d1f35', border: '1px solid #1a3050', borderRadius: '16px', padding: '24px', marginBottom: '16px' }}>
               <div style={{ fontSize: '13px', color: '#6b7f99', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '16px' }}>Community Probability</div>
@@ -298,7 +298,7 @@ export default function Market() {
           </div>
 
           {/* RIGHT — Vote panel */}
-          <div style={{ background: '#0d1f35', border: '1px solid #1a3050', borderRadius: '16px', padding: '24px', position: 'sticky', top: '32px' }}>
+          <div className='vote-panel' style={{ background: '#0d1f35', border: '1px solid #1a3050', borderRadius: '16px', padding: '24px', position: 'sticky', top: '32px' }}>
             <div style={{ fontSize: '15px', fontWeight: 700, marginBottom: '20px' }}>{submitted ? 'Update your forecast' : 'Make your forecast'}</div>
 
             {/* YES / NO buttons */}

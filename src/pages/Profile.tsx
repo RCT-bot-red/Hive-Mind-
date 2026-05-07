@@ -165,7 +165,7 @@ export default function Profile() {
           </div>
 
           {/* Stats row */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "12px", marginBottom: "32px" }}>
+          <div className="profile-stats" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "12px", marginBottom: "32px" }}>
             {[
               { label: "Total", value: predictions.length, color: "#fff" },
               { label: "Resolved", value: resolved.length, color: "#00B4D8" },

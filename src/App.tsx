@@ -80,7 +80,24 @@ function App() {
               </>
             )}
           </div>
+          {/* Hamburger - mobile only */}
+          <button className="hamburger" onClick={() => setMobileMenuOpen(o => !o)}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+              {mobileMenuOpen ? <><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></> : <><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></>}
+            </svg>
+          </button>
         </nav>
+        {mobileMenuOpen && (
+          <div className="mobile-menu">
+            {[{to:"/feed",l:"Feed"},{to:"/tournament",l:"Tournament"},{to:"/leaderboard",l:"Leaderboard"},{to:"/profile",l:"Profile"}].map(item => (
+              <Link key={item.to} to={item.to} onClick={() => setMobileMenuOpen(false)} className="mobile-menu-link">{item.l}</Link>
+            ))}
+            {user
+              ? <button onClick={() => { logout(); setMobileMenuOpen(false); }} className="mobile-menu-logout">Logout</button>
+              : <Link to="/auth" onClick={() => setMobileMenuOpen(false)} className="mobile-menu-link">Sign In</Link>
+            }
+          </div>
+        )}
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/feed" element={<Feed />} />

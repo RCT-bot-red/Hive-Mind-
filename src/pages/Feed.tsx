@@ -320,13 +320,13 @@ export default function Feed() {
         </div>
 
         {loading ? (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "16px" }}>
+          <div className="feed-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "16px" }}>
             {[...Array(6)].map((_, i) => <div key={i} style={{ background: "#0d1f35", borderRadius: "18px", height: "220px", opacity: 0.4 }}/>)}
           </div>
         ) : filtered.length === 0 ? (
           <div style={{ textAlign: "center", padding: "80px", background: "#0d1f35", borderRadius: "16px", border: "1px solid #1a3050", color: "#6b7f99" }}>No predictions in this category yet</div>
         ) : (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "16px" }}>
+          <div className="feed-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "16px" }}>
             {filtered.map(p => {
               const theme = getTheme(p.question, p.category);
               const dl = daysLeft(p.resolution_date);

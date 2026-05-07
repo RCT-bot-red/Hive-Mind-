@@ -137,3 +137,53 @@ code {
 .fade-up.visible > *:nth-child(2) { opacity: 1; transform: translateY(0); transition-delay: 0.15s; }
 .fade-up.visible > *:nth-child(3) { opacity: 1; transform: translateY(0); transition-delay: 0.25s; }
 .fade-up.visible > *:nth-child(4) { opacity: 1; transform: translateY(0); transition-delay: 0.35s; }
+
+/* ===== MOBILE RESPONSIVE ===== */
+@media (max-width: 768px) {
+
+  /* Navbar */
+  .nav-links { display: none !important; }
+  .nav-mobile-menu { display: flex !important; }
+
+  /* Feed grid → single column */
+  .feed-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Market page → stack columns */
+  .market-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Leaderboard podium → smaller */
+  .podium-grid {
+    grid-template-columns: 1fr 1.1fr 1fr !important;
+    gap: 6px !important;
+  }
+
+  /* Profile stats → 2 col */
+  .profile-stats {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  /* Home hero text smaller */
+  .hero-title {
+    font-size: clamp(32px, 8vw, 64px) !important;
+  }
+
+  /* Sticky vote panel on mobile → fixed bottom */
+  .vote-panel {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    top: auto !important;
+    border-radius: 20px 20px 0 0 !important;
+    z-index: 100 !important;
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+
+  /* Add padding to market left col so vote panel doesn't cover */
+  .market-left { padding-bottom: 380px !important; }
+}
