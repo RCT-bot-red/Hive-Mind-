@@ -173,52 +173,43 @@ export default function Tournament() {
           ) : (
             <>
               {/* TOP 3 PODIUM */}
-              {top3.length > 0 && (
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1.15fr 1fr", gap: "10px", marginBottom: "12px", alignItems: "flex-end" }}>
-                  {/* 2nd */}
-                  {top3[1] ? (
-                    <Link to={`/profile/${top3[1].username}`} style={{ textDecoration: "none" }}>
-                      <div style={{ background: "#0d1f35", border: "1px solid #c0c0c030", borderRadius: "14px 14px 0 0", padding: "20px 16px 22px", textAlign: "center", borderBottom: "3px solid #c0c0c0" }}>
-                        <div style={{ width: "44px", height: "44px", borderRadius: "50%", background: "#c0c0c020", border: "2px solid #c0c0c050", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 10px", fontSize: "18px", fontWeight: 900, color: "#c0c0c0" }}>{top3[1].username?.[0]?.toUpperCase()}</div>
-                        <div style={{ fontSize: "13px", fontWeight: 700, color: "#fff", marginBottom: "4px" }}>{top3[1].username}</div>
-                        <div style={{ fontSize: "28px", fontWeight: 900, color: "#c0c0c0" }}>{Math.round(top3[1].accuracy_score || 0)}%</div>
-                        <div style={{ fontSize: "11px", color: "#6b7f99" }}>{top3[1].resolved_predictions || 0} resolved</div>
-                        <div style={{ marginTop: "8px", fontSize: "13px", fontWeight: 700, color: "#c0c0c0" }}>$100</div>
-                        <div style={{ fontSize: "10px", color: "#c0c0c0", fontWeight: 700, marginTop: "6px", letterSpacing: "1px" }}>2ND</div>
+              {top3.length > 0 && (() => {
+                const podiumSlot = (user: any, rank: number, config: { color: string; prize: string; label: string; height: string; avatarSize: string; scoreSize: string; pad: string }) => {
+                  const empty = (
+                    <div style={{ background: "#0d1f3580", border: `1px dashed ${config.color}30`, borderRadius: "14px 14px 0 0", padding: config.pad, textAlign: "center", borderBottom: `3px solid ${config.color}40`, height: config.height, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "8px" }}>
+                      <div style={{ width: "40px", height: "40px", borderRadius: "50%", border: `2px dashed ${config.color}30`, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        <span style={{ fontSize: "18px", color: `${config.color}50`, fontWeight: 900 }}>?</span>
+                      </div>
+                      <div style={{ fontSize: "11px", color: "#3a5070" }}>Open spot</div>
+                      <div style={{ fontSize: "12px", fontWeight: 700, color: `${config.color}60` }}>{config.prize}</div>
+                      <div style={{ fontSize: "10px", color: `${config.color}50`, fontWeight: 700, letterSpacing: "1px" }}>{config.label}</div>
+                    </div>
+                  );
+                  if (!user) return empty;
+                  return (
+                    <Link to={`/profile/${user.username}`} style={{ textDecoration: "none" }}>
+                      <div style={{ background: rank === 1 ? "linear-gradient(180deg, #1a1500 0%, #0d1f35 100%)" : "#0d1f35", border: `1px solid ${config.color}40`, borderRadius: "14px 14px 0 0", padding: config.pad, textAlign: "center", borderBottom: `3px solid ${config.color}`, position: "relative", minHeight: config.height }}>
+                        {rank === 1 && <div style={{ position: "absolute", top: "-11px", left: "50%", transform: "translateX(-50%)", background: "#ffd700", color: "#000", fontSize: "9px", fontWeight: 900, padding: "3px 12px", borderRadius: "20px", letterSpacing: "1.5px", whiteSpace: "nowrap" }}>LEADER</div>}
+                        <div style={{ width: config.avatarSize, height: config.avatarSize, borderRadius: "50%", background: `${config.color}20`, border: `2px solid ${config.color}`, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 10px", fontSize: rank === 1 ? "22px" : "16px", fontWeight: 900, color: config.color }}>
+                          {user.username?.[0]?.toUpperCase()}
+                        </div>
+                        <div style={{ fontSize: rank === 1 ? "14px" : "12px", fontWeight: 700, color: "#fff", marginBottom: "4px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{user.username}</div>
+                        <div style={{ fontSize: config.scoreSize, fontWeight: 900, color: config.color }}>{Math.round(user.accuracy_score || 0)}%</div>
+                        <div style={{ fontSize: "11px", color: "#6b7f99", marginTop: "2px" }}>{user.resolved_predictions || 0} resolved</div>
+                        <div style={{ marginTop: "8px", fontSize: rank === 1 ? "15px" : "13px", fontWeight: 700, color: config.color }}>{config.prize}</div>
+                        <div style={{ fontSize: "10px", color: config.color, fontWeight: 700, marginTop: "6px", letterSpacing: "1px" }}>{config.label}</div>
                       </div>
                     </Link>
-                  ) : <div/>}
-
-                  {/* 1st */}
-                  {top3[0] && (
-                    <Link to={`/profile/${top3[0].username}`} style={{ textDecoration: "none" }}>
-                      <div style={{ background: "linear-gradient(180deg, #1a1500 0%, #0d1f35 100%)", border: "1px solid #ffd70050", borderRadius: "14px 14px 0 0", padding: "28px 16px 22px", textAlign: "center", borderBottom: "3px solid #ffd700", position: "relative" }}>
-                        <div style={{ position: "absolute", top: "-10px", left: "50%", transform: "translateX(-50%)", background: "#ffd700", color: "#000", fontSize: "10px", fontWeight: 900, padding: "3px 12px", borderRadius: "20px", letterSpacing: "1px" }}>LEADER</div>
-                        <div style={{ width: "52px", height: "52px", borderRadius: "50%", background: "#ffd70020", border: "2px solid #ffd700", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 10px", fontSize: "22px", fontWeight: 900, color: "#ffd700" }}>{top3[0].username?.[0]?.toUpperCase()}</div>
-                        <div style={{ fontSize: "14px", fontWeight: 700, color: "#fff", marginBottom: "4px" }}>{top3[0].username}</div>
-                        <div style={{ fontSize: "36px", fontWeight: 900, color: "#ffd700" }}>{Math.round(top3[0].accuracy_score || 0)}%</div>
-                        <div style={{ fontSize: "11px", color: "#6b7f99" }}>{top3[0].resolved_predictions || 0} resolved</div>
-                        <div style={{ marginTop: "8px", fontSize: "15px", fontWeight: 700, color: "#ffd700" }}>$250</div>
-                        <div style={{ fontSize: "10px", color: "#ffd700", fontWeight: 700, marginTop: "6px", letterSpacing: "1px" }}>1ST</div>
-                      </div>
-                    </Link>
-                  )}
-
-                  {/* 3rd */}
-                  {top3[2] ? (
-                    <Link to={`/profile/${top3[2].username}`} style={{ textDecoration: "none" }}>
-                      <div style={{ background: "#0d1f35", border: "1px solid #cd7f3230", borderRadius: "14px 14px 0 0", padding: "16px 16px 22px", textAlign: "center", borderBottom: "3px solid #cd7f32" }}>
-                        <div style={{ width: "40px", height: "40px", borderRadius: "50%", background: "#cd7f3220", border: "2px solid #cd7f3250", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 10px", fontSize: "16px", fontWeight: 900, color: "#cd7f32" }}>{top3[2].username?.[0]?.toUpperCase()}</div>
-                        <div style={{ fontSize: "13px", fontWeight: 700, color: "#fff", marginBottom: "4px" }}>{top3[2].username}</div>
-                        <div style={{ fontSize: "26px", fontWeight: 900, color: "#cd7f32" }}>{Math.round(top3[2].accuracy_score || 0)}%</div>
-                        <div style={{ fontSize: "11px", color: "#6b7f99" }}>{top3[2].resolved_predictions || 0} resolved</div>
-                        <div style={{ marginTop: "8px", fontSize: "13px", fontWeight: 700, color: "#cd7f32" }}>$50</div>
-                        <div style={{ fontSize: "10px", color: "#cd7f32", fontWeight: 700, marginTop: "6px", letterSpacing: "1px" }}>3RD</div>
-                      </div>
-                    </Link>
-                  ) : <div/>}
-                </div>
-              )}
+                  );
+                };
+                return (
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1.2fr 1fr", gap: "10px", marginBottom: "12px", alignItems: "flex-end" }}>
+                    {podiumSlot(top3[1], 2, { color: "#c0c0c0", prize: "$100", label: "2ND", height: "200px", avatarSize: "44px", scoreSize: "26px", pad: "20px 14px 22px" })}
+                    {podiumSlot(top3[0], 1, { color: "#ffd700", prize: "$250", label: "1ST", height: "240px", avatarSize: "52px", scoreSize: "34px", pad: "28px 14px 22px" })}
+                    {podiumSlot(top3[2], 3, { color: "#cd7f32", prize: "$50", label: "3RD", height: "180px", avatarSize: "40px", scoreSize: "24px", pad: "16px 14px 22px" })}
+                  </div>
+                );
+              })()}
 
               {/* REST OF LEADERBOARD */}
               {rest.length > 0 && (
