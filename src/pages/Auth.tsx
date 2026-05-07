@@ -22,7 +22,11 @@ navigate('/')
 }else{
 const{data,error}=await supabase.auth.signUp({email,password})
 if(error){setError(error.message);setLoading(false);return}
-if(data.user){await supabase.from('users').insert({email,username:username||email.split('@')[0],bio:'',accuracy_score:0,total_predictions:0,correct_predictions:0,resolved_predictions:0})}
+if(data.user){
+  await supabase.from('users').insert({email,username:email.split('@')[0],bio:'',accuracy_score:0,total_predictions:0,correct_predictions:0,resolved_predictions:0})
+  navigate('/onboarding')
+  return
+}
 navigate('/')
 }
 setLoading(false)

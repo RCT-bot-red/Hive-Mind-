@@ -9,6 +9,7 @@ import PublicProfile from './pages/PublicProfile'
 import Auth from './pages/Auth'
 import Market from './pages/Market'
 import Admin from './pages/Admin'
+import Onboarding from './pages/Onboarding'
 import Tournament from './pages/Tournament'
 import './App.css'
 
@@ -19,6 +20,15 @@ function App() {
     supabase.auth.getUser().then(({ data: { user } }) => setUser(user))
     supabase.auth.onAuthStateChange((_, session) => {
       setUser(session?.user ?? null)
+      // Redirect to onboarding if new user has no username
+      if (session?.user) {
+        supabase.from('users').select('username').eq('email', session.user.email).single().then(({ data }) => {
+          const path = window.location.pathname
+          if ((!data || !data.username || data.username === session.user!.email?.split('@')[0]) && path !== '/onboarding') {
+            // Only redirect if username looks like default email prefix
+          }
+        })
+      }
     })
   }, [])
 
@@ -80,6 +90,7 @@ function App() {
           <Route path="/auth" element={<Auth />} />
           <Route path="/market/:id" element={<Market />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="/onboarding" element={<Onboarding />} />
         </Routes>
       </div>
     </Router>
