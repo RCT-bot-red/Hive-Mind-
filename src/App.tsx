@@ -10,6 +10,7 @@ import Auth from './pages/Auth'
 import Market from './pages/Market'
 import Admin from './pages/Admin'
 import Onboarding from './pages/Onboarding'
+import NotFound from './pages/NotFound'
 import Tournament from './pages/Tournament'
 import './App.css'
 
@@ -91,6 +92,7 @@ function App() {
           <Route path="/market/:id" element={<Market />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/onboarding" element={<Onboarding />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
     </Router>
