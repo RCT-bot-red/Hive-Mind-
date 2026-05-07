@@ -18,7 +18,14 @@ function App() {
   const [user, setUser] = useState<any>(null)
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => setUser(user))
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setUser(user);
+      if (user) {
+        supabase.from("users").select("id").eq("email", user.email).single().then(({ data }) => {
+          if (data) fetchNotifications(data.id);
+        });
+      }
+    });
     supabase.auth.onAuthStateChange((_, session) => {
       setUser(session?.user ?? null)
       // Redirect to onboarding if new user has no username
@@ -80,6 +87,48 @@ function App() {
               </>
             )}
           </div>
+          {/* Notification bell */}
+          {user && (
+            <div style={{ position: "relative" }}>
+              <button onClick={() => { setNotifOpen(o => !o); if (!notifOpen) { supabase.from("users").select("id").eq("email", user.email).single().then(({ data }) => { if (data) { markAllRead(data.id); } }); } }}
+                style={{ background: "none", border: "none", color: "#ccd6f6", cursor: "pointer", padding: "6px", position: "relative", display: "flex", alignItems: "center" }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                  <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                </svg>
+                {unreadCount > 0 && (
+                  <span style={{ position: "absolute", top: "2px", right: "2px", width: "16px", height: "16px", background: "#ff4444", borderRadius: "50%", fontSize: "10px", fontWeight: 900, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", lineHeight: 1 }}>
+                    {unreadCount > 9 ? "9+" : unreadCount}
+                  </span>
+                )}
+              </button>
+              {/* Dropdown */}
+              {notifOpen && (
+                <div style={{ position: "absolute", right: 0, top: "40px", width: "320px", background: "#0d1f35", border: "1px solid #1a3050", borderRadius: "14px", boxShadow: "0 16px 48px rgba(0,0,0,0.5)", zIndex: 100, overflow: "hidden" }}>
+                  <div style={{ padding: "14px 16px", borderBottom: "1px solid #1a3050", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <span style={{ fontSize: "14px", fontWeight: 700, color: "#fff" }}>Notifications</span>
+                    {notifications.length > 0 && <span style={{ fontSize: "11px", color: "#3a5070" }}>{notifications.length} total</span>}
+                  </div>
+                  <div style={{ maxHeight: "360px", overflowY: "auto" }}>
+                    {notifications.length === 0 ? (
+                      <div style={{ padding: "32px 16px", textAlign: "center", color: "#3a5070", fontSize: "14px" }}>
+                        <div style={{ fontSize: "32px", marginBottom: "8px" }}>🔔</div>
+                        No notifications yet
+                      </div>
+                    ) : notifications.map((n: any) => (
+                      <div key={n.id} style={{ padding: "12px 16px", borderBottom: "1px solid #0a1628", background: n.read ? "transparent" : "#00B4D808", display: "flex", gap: "10px", alignItems: "flex-start" }}>
+                        <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: n.read ? "transparent" : "#00B4D8", flexShrink: 0, marginTop: "6px" }}/>
+                        <div style={{ flex: 1 }}>
+                          <p style={{ color: "#c0d0e0", fontSize: "13px", lineHeight: 1.5, margin: "0 0 4px" }}>{n.message}</p>
+                          <span style={{ fontSize: "11px", color: "#3a5070" }}>{new Date(n.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
           {/* Hamburger - mobile only */}
           <button className="hamburger" onClick={() => setMobileMenuOpen(o => !o)}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
@@ -87,6 +136,7 @@ function App() {
             </svg>
           </button>
         </nav>
+        {notifOpen && <div onClick={() => setNotifOpen(false)} style={{ position: "fixed", inset: 0, zIndex: 99 }}/>}
         {mobileMenuOpen && (
           <div className="mobile-menu">
             {[{to:"/feed",l:"Feed"},{to:"/tournament",l:"Tournament"},{to:"/leaderboard",l:"Leaderboard"},{to:"/profile",l:"Profile"}].map(item => (

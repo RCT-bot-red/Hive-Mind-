@@ -36,7 +36,23 @@ export default function Admin() {
 
   const resolve = async (predId: string, status: "correct" | "incorrect") => {
     setSaving(predId);
+    const pred = predictions.find(p => p.id === predId);
     await supabase.from("predictions").update({ status, resolved_at: new Date().toISOString() }).eq("id", predId);
+    
+    // Get all users who voted on this prediction
+    const { data: voters } = await supabase.from("votes").select("user_id, probability").eq("prediction_id", predId);
+    if (voters && voters.length > 0 && pred) {
+      const emoji = status === "correct" ? "✅" : "❌";
+      const notifs = voters.map((v: any) => ({
+        user_id: v.user_id,
+        prediction_id: predId,
+        type: "resolved",
+        message: `${emoji} "${pred.question.slice(0, 60)}${pred.question.length > 60 ? "..." : ""}" was resolved ${status.toUpperCase()}`,
+        read: false,
+      }));
+      await supabase.from("notifications").insert(notifs);
+    }
+    
     setPredictions(prev => prev.map(p => p.id === predId ? { ...p, status } : p));
     setSaving(null);
   };
