@@ -298,13 +298,25 @@ export default function Feed() {
             ))}
           </div>
           {/* Sort dropdown */}
-          <select value={sort} onChange={e => setSort(e.target.value)} style={{ background: "#0d1f35", border: "1px solid #1a3050", borderRadius: "10px", padding: "8px 14px", color: "#8899aa", fontSize: "13px", fontWeight: 700, cursor: "pointer", outline: "none" }}>
-            <option value="newest">Sort: Newest first</option>
-            <option value="oldest">Sort: Oldest first</option>
-            <option value="highest">Sort: Highest probability</option>
-            <option value="lowest">Sort: Lowest probability</option>
-            <option value="ending">Sort: Ending soon</option>
-          </select>
+          <div style={{ display: "flex", gap: "6px" }}>
+            {[
+              { key: "newest", label: "New", icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> },
+              { key: "highest", label: "High %", icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg> },
+              { key: "lowest", label: "Low %", icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/></svg> },
+              { key: "ending", label: "Ending", icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> },
+            ].map(s => (
+              <button key={s.key} onClick={() => setSort(s.key)} style={{
+                background: sort === s.key ? "#00B4D820" : "#0d1f35",
+                border: `1px solid ${sort === s.key ? "#00B4D8" : "#1a3050"}`,
+                color: sort === s.key ? "#00B4D8" : "#6b7f99",
+                padding: "7px 12px", borderRadius: "10px", fontSize: "12px",
+                fontWeight: 700, cursor: "pointer",
+                display: "flex", alignItems: "center", gap: "5px"
+              }}>
+                {s.icon}{s.label}
+              </button>
+            ))}
+          </div>
         </div>
 
         {loading ? (
