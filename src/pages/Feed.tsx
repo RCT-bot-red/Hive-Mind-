@@ -286,8 +286,8 @@ export default function Feed() {
         </div>
 
         {/* Categories + Sort row */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px", flexWrap: "wrap", gap: "12px" }}>
-          <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px", gap: "12px" }}>
+          <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", flex: 1 }}>
             {CATEGORIES.map(cat => (
               <button key={cat} onClick={() => setCategory(cat)} style={{
                 background: category === cat ? "#00B4D8" : "#0d1f35",
