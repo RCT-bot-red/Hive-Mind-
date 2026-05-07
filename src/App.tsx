@@ -16,6 +16,22 @@ import './App.css'
 
 function App() {
   const [user, setUser] = useState<any>(null)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [notifOpen, setNotifOpen] = useState(false)
+  const [notifications, setNotifications] = useState<any[]>([])
+  const [unreadCount, setUnreadCount] = useState(0)
+
+  const fetchNotifications = async (userId: string) => {
+    const { data } = await supabase.from("notifications").select("*").eq("user_id", userId).order("created_at", { ascending: false }).limit(20)
+    setNotifications(data || [])
+    setUnreadCount((data || []).filter((n: any) => !n.read).length)
+  }
+
+  const markAllRead = async (userId: string) => {
+    await supabase.from("notifications").update({ read: true }).eq("user_id", userId).eq("read", false)
+    setNotifications(prev => prev.map(n => ({ ...n, read: true })))
+    setUnreadCount(0)
+  }
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
