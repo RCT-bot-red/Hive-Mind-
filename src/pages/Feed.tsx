@@ -212,6 +212,8 @@ export default function Feed() {
   const [predictions, setPredictions] = useState<any[]>([]);
   const [category, setCategory] = useState("All");
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [sort, setSort] = useState("newest");
 
   useEffect(() => { fetchPredictions(); }, [category]);
 
@@ -221,13 +223,24 @@ export default function Feed() {
       let query = supabase
         .from("predictions")
         .select("id, question, category, confidence, resolution_date, status, created_at, image_url")
-        .eq("status", "open")
-        .order("created_at", { ascending: false });
+        .eq("status", "open");
       if (category !== "All") query = query.eq("category", category);
       const { data } = await query;
       setPredictions(data || []);
     } finally { setLoading(false); }
   };
+
+  // Client-side sort + search
+  const filtered = (predictions || [])
+    .filter(p => search === "" || p.question.toLowerCase().includes(search.toLowerCase()))
+    .sort((a, b) => {
+      if (sort === "newest") return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      if (sort === "oldest") return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+      if (sort === "highest") return b.confidence - a.confidence;
+      if (sort === "lowest") return a.confidence - b.confidence;
+      if (sort === "ending") return new Date(a.resolution_date).getTime() - new Date(b.resolution_date).getTime();
+      return 0;
+    });
 
   const timeAgo = (date: string) => {
     const h = Math.floor((Date.now() - new Date(date).getTime()) / 3600000);
@@ -248,31 +261,61 @@ export default function Feed() {
     <div style={{ backgroundColor: "#0a1628", minHeight: "100vh", padding: "40px 24px" }}>
       <div style={{ maxWidth: "1100px", margin: "0 auto" }}>
 
-        <div style={{ marginBottom: "32px" }}>
+        {/* Header */}
+        <div style={{ marginBottom: "24px" }}>
           <h1 style={{ fontSize: "36px", fontWeight: 900, marginBottom: "6px", letterSpacing: "-0.5px" }}>Predictions Feed</h1>
-          <p style={{ color: "#6b7f99", fontSize: "15px", margin: 0 }}>{predictions.length} active predictions — click to vote</p>
+          <p style={{ color: "#6b7f99", fontSize: "15px", margin: 0 }}>
+            {filtered.length} prediction{filtered.length !== 1 ? "s" : ""}{search ? ` matching "${search}"` : " active"} — click to vote
+          </p>
         </div>
 
-        <div style={{ display: "flex", gap: "8px", marginBottom: "32px", flexWrap: "wrap" }}>
-          {CATEGORIES.map(cat => (
-            <button key={cat} onClick={() => setCategory(cat)} style={{
-              background: category === cat ? "#00B4D8" : "#0d1f35",
-              border: `1px solid ${category === cat ? "#00B4D8" : "#1a3050"}`,
-              color: category === cat ? "#000" : "#8899aa",
-              padding: "8px 18px", borderRadius: "20px", fontSize: "13px", fontWeight: 700, cursor: "pointer"
-            }}>{cat}</button>
-          ))}
+        {/* Search bar */}
+        <div style={{ position: "relative", marginBottom: "16px" }}>
+          <svg style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", color: "#3a5070" }} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder="Search predictions..."
+            style={{ width: "100%", background: "#0d1f35", border: "1px solid #1a3050", borderRadius: "12px", padding: "12px 14px 12px 42px", color: "#fff", fontSize: "14px", outline: "none", boxSizing: "border-box", transition: "border-color 0.2s" }}
+            onFocus={e => e.target.style.borderColor = "#00B4D8"}
+            onBlur={e => e.target.style.borderColor = "#1a3050"}
+          />
+          {search && (
+            <button onClick={() => setSearch("")} style={{ position: "absolute", right: "12px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", color: "#6b7f99", cursor: "pointer", fontSize: "18px", lineHeight: 1 }}>×</button>
+          )}
+        </div>
+
+        {/* Categories + Sort row */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px", flexWrap: "wrap", gap: "12px" }}>
+          <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+            {CATEGORIES.map(cat => (
+              <button key={cat} onClick={() => setCategory(cat)} style={{
+                background: category === cat ? "#00B4D8" : "#0d1f35",
+                border: `1px solid ${category === cat ? "#00B4D8" : "#1a3050"}`,
+                color: category === cat ? "#000" : "#8899aa",
+                padding: "7px 16px", borderRadius: "20px", fontSize: "13px", fontWeight: 700, cursor: "pointer"
+              }}>{cat}</button>
+            ))}
+          </div>
+          {/* Sort dropdown */}
+          <select value={sort} onChange={e => setSort(e.target.value)} style={{ background: "#0d1f35", border: "1px solid #1a3050", borderRadius: "10px", padding: "8px 14px", color: "#8899aa", fontSize: "13px", fontWeight: 700, cursor: "pointer", outline: "none" }}>
+            <option value="newest">🕐 Newest</option>
+            <option value="oldest">🕐 Oldest</option>
+            <option value="highest">📈 Highest %</option>
+            <option value="lowest">📉 Lowest %</option>
+            <option value="ending">⏰ Ending soon</option>
+          </select>
         </div>
 
         {loading ? (
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "16px" }}>
             {[...Array(6)].map((_, i) => <div key={i} style={{ background: "#0d1f35", borderRadius: "18px", height: "220px", opacity: 0.4 }}/>)}
           </div>
-        ) : predictions.length === 0 ? (
+        ) : filtered.length === 0 ? (
           <div style={{ textAlign: "center", padding: "80px", background: "#0d1f35", borderRadius: "16px", border: "1px solid #1a3050", color: "#6b7f99" }}>No predictions in this category yet</div>
         ) : (
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "16px" }}>
-            {predictions.map(p => {
+            {filtered.map(p => {
               const theme = getTheme(p.question, p.category);
               const dl = daysLeft(p.resolution_date);
               const confColor = p.confidence >= 65 ? "#00ff88" : p.confidence >= 45 ? "#00B4D8" : "#ff6b6b";
