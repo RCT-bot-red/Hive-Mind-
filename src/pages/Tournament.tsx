@@ -42,7 +42,14 @@ export default function Tournament() {
       let { data: u } = await supabase.from("users").select("id").eq("email", user.email).single();
       if (!u) { const { data: newU } = await supabase.from("users").upsert({ email: user.email, username: user.email.split("@")[0] }, { onConflict: "email" }).select("id").single(); u = newU; }
       setCurrentUser(u);
-      if (u && tournament) { const { data: entry } = await supabase.from("tournament_entries").select("id").eq("user_id", u.id).eq("tournament_id", tournament.id).maybeSingle(); setIsJoined(!!entry); }
+      if (u && tournament) {
+        // Check using count which is more reliable than single()
+        const { count } = await supabase.from("tournament_entries")
+          .select("*", { count: "exact", head: true })
+          .eq("user_id", u.id)
+          .eq("tournament_id", tournament.id);
+        setIsJoined((count || 0) > 0);
+      }
     }
     setLoading(false);
   };
