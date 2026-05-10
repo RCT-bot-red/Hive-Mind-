@@ -42,7 +42,7 @@ export default function Tournament() {
       let { data: u } = await supabase.from("users").select("id").eq("email", user.email).single();
       if (!u) { const { data: newU } = await supabase.from("users").upsert({ email: user.email, username: user.email.split("@")[0] }, { onConflict: "email" }).select("id").single(); u = newU; }
       setCurrentUser(u);
-      if (u) { const { data: entry } = await supabase.from("tournament_entries").select("id").eq("user_id", u.id).single(); setIsJoined(!!entry); }
+      if (u && tournament) { const { data: entry } = await supabase.from("tournament_entries").select("id").eq("user_id", u.id).eq("tournament_id", tournament.id).maybeSingle(); setIsJoined(!!entry); }
     }
     setLoading(false);
   };
@@ -50,8 +50,10 @@ export default function Tournament() {
   const handleJoin = async () => {
     if (!currentUser) { navigate("/auth"); return; }
     setJoining(true);
-    const { error } = await supabase.from("tournament_entries").insert({ user_id: currentUser.id, tournament_id: tournamentId });
-    if (!error || error.code === "23505") { setIsJoined(true); setParticipants(p => p + 1); }
+    const { error } = await supabase.from("tournament_entries")
+      .upsert({ user_id: currentUser.id, tournament_id: tournamentId }, { onConflict: "user_id,tournament_id" });
+    if (!error) { setIsJoined(true); setParticipants(p => p + 1); }
+    else if (error.code === "23505") { setIsJoined(true); } // already joined
     setJoining(false);
   };
 
