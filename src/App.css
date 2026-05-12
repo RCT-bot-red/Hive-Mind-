@@ -12,9 +12,12 @@ body {
 }
 
 .navbar {
-  background-color: #0a1628;
-  border-bottom: 1px solid #1a2f4a;
-  padding: 18px 32px;
+  background-color: rgba(10, 22, 40, 0.97);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(26, 48, 80, 0.9);
+  padding: 0 32px;
+  height: 64px;
   display: flex;
   align-items: center;
   justify-content: space-between;

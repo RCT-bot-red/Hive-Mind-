@@ -262,11 +262,13 @@ export default function Feed() {
       <div style={{ maxWidth: "1100px", margin: "0 auto" }}>
 
         {/* Header */}
-        <div style={{ marginBottom: "24px" }}>
-          <h1 style={{ fontSize: "36px", fontWeight: 900, marginBottom: "6px", letterSpacing: "-0.5px" }}>Predictions Feed</h1>
-          <p style={{ color: "#6b7f99", fontSize: "15px", margin: 0 }}>
-            {filtered.length} prediction{filtered.length !== 1 ? "s" : ""}{search ? ` matching "${search}"` : " active"} — click to vote
-          </p>
+        <div style={{ marginBottom: "28px", display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: "12px" }}>
+          <div>
+            <h1 style={{ fontSize: "32px", fontWeight: 900, marginBottom: "4px", letterSpacing: "-0.5px" }}>Predictions Feed</h1>
+            <p style={{ color: "#6b7f99", fontSize: "14px", margin: 0 }}>
+              <span style={{ color: "#00B4D8", fontWeight: 700 }}>{filtered.length}</span> active predictions — vote to influence the community probability
+            </p>
+          </div>
         </div>
 
         {/* Search bar */}
@@ -285,33 +287,39 @@ export default function Feed() {
           )}
         </div>
 
-        {/* Categories + Sort row */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px", gap: "12px" }}>
-          <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", flex: 1 }}>
+
+        {/* Filters */}
+        <div style={{ marginBottom: "28px" }}>
+          {/* Categories row - single scrollable line */}
+          <div style={{ display: "flex", gap: "8px", overflowX: "auto", paddingBottom: "4px", marginBottom: "12px", scrollbarWidth: "none" }}>
             {CATEGORIES.map(cat => (
               <button key={cat} onClick={() => setCategory(cat)} style={{
                 background: category === cat ? "#00B4D8" : "#0d1f35",
                 border: `1px solid ${category === cat ? "#00B4D8" : "#1a3050"}`,
                 color: category === cat ? "#000" : "#8899aa",
-                padding: "7px 16px", borderRadius: "20px", fontSize: "13px", fontWeight: 700, cursor: "pointer"
+                padding: "7px 16px", borderRadius: "20px", fontSize: "13px",
+                fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap", flexShrink: 0,
+                transition: "all 0.15s"
               }}>{cat}</button>
             ))}
           </div>
-          {/* Sort dropdown */}
-          <div style={{ display: "flex", gap: "6px" }}>
+          {/* Sort row - clean and minimal */}
+          <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+            <span style={{ fontSize: "11px", color: "#3a5070", fontWeight: 700, letterSpacing: "0.5px", textTransform: "uppercase", marginRight: "4px" }}>Sort</span>
             {[
-              { key: "newest", label: "New", icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> },
-              { key: "highest", label: "High %", icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg> },
-              { key: "lowest", label: "Low %", icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/></svg> },
-              { key: "ending", label: "Ending", icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> },
+              { key: "newest", label: "Recent", icon: <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> },
+              { key: "highest", label: "Highest %", icon: <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg> },
+              { key: "lowest", label: "Lowest %", icon: <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/></svg> },
+              { key: "ending", label: "Ending Soon", icon: <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> },
             ].map(s => (
               <button key={s.key} onClick={() => setSort(s.key)} style={{
-                background: sort === s.key ? "#00B4D820" : "#0d1f35",
+                background: sort === s.key ? "#00B4D820" : "transparent",
                 border: `1px solid ${sort === s.key ? "#00B4D8" : "#1a3050"}`,
                 color: sort === s.key ? "#00B4D8" : "#6b7f99",
-                padding: "7px 12px", borderRadius: "10px", fontSize: "12px",
+                padding: "5px 12px", borderRadius: "8px", fontSize: "12px",
                 fontWeight: 700, cursor: "pointer",
-                display: "flex", alignItems: "center", gap: "5px"
+                display: "flex", alignItems: "center", gap: "5px",
+                transition: "all 0.15s"
               }}>
                 {s.icon}{s.label}
               </button>
@@ -377,15 +385,18 @@ export default function Feed() {
 
                     {/* Footer */}
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                      <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                      <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
                         <span style={{ background: `${theme.color}18`, border: `1px solid ${theme.color}35`, color: theme.color, padding: "3px 10px", borderRadius: "20px", fontSize: "10px", fontWeight: 700 }}>
                           {p.category}
                         </span>
                         <span style={{ fontSize: "11px", color: "#3a5070" }}>{timeAgo(p.created_at)}</span>
                       </div>
-                      <span style={{ fontSize: "11px", color: dl.urgent ? "#ff6b6b" : "#3a5070", fontWeight: dl.urgent ? 700 : 400 }}>
-                        {dl.text}
-                      </span>
+                      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                        <span style={{ fontSize: "11px", color: dl.urgent ? "#ff6b6b" : "#3a5070", fontWeight: dl.urgent ? 700 : 400 }}>
+                          {dl.text}
+                        </span>
+                        <span style={{ fontSize: "11px", color: theme.color, fontWeight: 700 }}>Vote →</span>
+                      </div>
                     </div>
                   </div>
                 </div>
