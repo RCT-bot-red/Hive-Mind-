@@ -139,7 +139,7 @@ export default function Feed() {
             </div>
 
             {/* Search */}
-            <div style={{ position: "relative", width: "280px" }}>
+            <div style={{ position: "relative", width: "320px" }}>
               <svg style={{ position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)" }} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3a5070" strokeWidth="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
               <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search markets..."
                 style={{ width: "100%", background: "#0a1628", border: "1px solid #0f2040", borderRadius: "10px", padding: "10px 14px 10px 36px", color: "#fff", fontSize: "13px", outline: "none", boxSizing: "border-box" }}
@@ -186,10 +186,10 @@ export default function Feed() {
       </div>
 
       {/* GRID */}
-      <div style={{ padding: "28px 40px 80px", width: "100%", boxSizing: "border-box" as const }}>
+      <div style={{ padding: "28px 48px 80px", width: "100%", boxSizing: "border-box" as const }}>
         {loading ? (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "16px" }}>
-            {[...Array(6)].map((_, i) => (
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(360px, 1fr))", gap: "20px" }}>
+            {[...Array(8)].map((_, i) => (
               <div key={i} style={{ background: "#0a1628", borderRadius: "16px", height: "280px", opacity: 0.4, animation: "pulse 1.5s ease-in-out infinite" }}/>
             ))}
           </div>
@@ -198,7 +198,11 @@ export default function Feed() {
             No predictions found
           </div>
         ) : (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "16px" }}>
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(360px, 1fr))",
+            gap: "20px",
+          }}>
             {filtered.map(p => {
               const theme = getTheme(p.question, p.category);
               const dl = daysLeft(p.resolution_date);
