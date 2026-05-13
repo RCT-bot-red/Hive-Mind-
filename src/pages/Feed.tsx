@@ -266,15 +266,17 @@ export default function Feed() {
                       <div style={{ background: `linear-gradient(90deg, ${confColor}, ${confColor}80)`, width: `${p.confidence}%`, height: "100%", borderRadius: "3px" }}/>
                     </div>
 
-                    {/* YES / NO buttons preview */}
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", marginBottom: "12px" }}>
-                      <div style={{ background: "#00ff8810", border: "1px solid #00ff8825", borderRadius: "8px", padding: "7px", textAlign: "center" }}>
-                        <div style={{ fontSize: "11px", fontWeight: 900, color: "#00ff88" }}>YES</div>
-                        <div style={{ fontSize: "13px", fontWeight: 700, color: "#00ff8899" }}>{p.confidence}¢</div>
-                      </div>
-                      <div style={{ background: "#ff444410", border: "1px solid #ff444425", borderRadius: "8px", padding: "7px", textAlign: "center" }}>
-                        <div style={{ fontSize: "11px", fontWeight: 900, color: "#ff6b6b" }}>NO</div>
-                        <div style={{ fontSize: "13px", fontWeight: 700, color: "#ff6b6b99" }}>{100 - p.confidence}¢</div>
+                    {/* YES / NO visual bar */}
+                    <div style={{ marginBottom: "14px" }}>
+                      <div style={{ display: "flex", borderRadius: "8px", overflow: "hidden", height: "36px", gap: "2px" }}>
+                        <div style={{ flex: p.confidence, background: "linear-gradient(135deg, #00ff8830, #00ff8818)", border: "1px solid #00ff8840", borderRadius: "6px 0 0 6px", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px", transition: "all 0.2s" }}>
+                          <span style={{ fontSize: "11px", fontWeight: 900, color: "#00ff88", letterSpacing: "0.5px" }}>YES</span>
+                          <span style={{ fontSize: "13px", fontWeight: 900, color: "#00ff88" }}>{p.confidence}%</span>
+                        </div>
+                        <div style={{ flex: 100 - p.confidence, background: "linear-gradient(135deg, #ff444820, #ff444812)", border: "1px solid #ff444835", borderRadius: "0 6px 6px 0", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px", transition: "all 0.2s" }}>
+                          <span style={{ fontSize: "11px", fontWeight: 900, color: "#ff6b6b", letterSpacing: "0.5px" }}>NO</span>
+                          <span style={{ fontSize: "13px", fontWeight: 900, color: "#ff6b6b" }}>{100 - p.confidence}%</span>
+                        </div>
                       </div>
                     </div>
 
