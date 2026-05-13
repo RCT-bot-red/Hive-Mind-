@@ -115,11 +115,11 @@ export default function Feed() {
   };
 
   return (
-    <div style={{ backgroundColor: "#070e1a", minHeight: "100vh" }}>
+    <div style={{ backgroundColor: "#070e1a", minHeight: "100vh", width: "100%" }}>
 
       {/* TOP BANNER */}
-      <div style={{ background: "linear-gradient(180deg, #0a1628 0%, #070e1a 100%)", borderBottom: "1px solid #0f2040", padding: "36px 32px 32px" }}>
-        <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
+      <div style={{ background: "linear-gradient(180deg, #0a1628 0%, #070e1a 100%)", borderBottom: "1px solid #0f2040", padding: "28px 40px 24px" }}>
+        <div style={{ maxWidth: "1600px", margin: "0 auto", width: "100%" }}>
 
           {/* Title row */}
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px", flexWrap: "wrap", gap: "16px" }}>
@@ -186,9 +186,9 @@ export default function Feed() {
       </div>
 
       {/* GRID */}
-      <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "28px 32px 80px" }}>
+      <div style={{ maxWidth: "1600px", margin: "0 auto", padding: "28px 40px 80px", width: "100%" }}>
         {loading ? (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "16px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "16px" }}>
             {[...Array(6)].map((_, i) => (
               <div key={i} style={{ background: "#0a1628", borderRadius: "16px", height: "280px", opacity: 0.4, animation: "pulse 1.5s ease-in-out infinite" }}/>
             ))}
@@ -198,7 +198,7 @@ export default function Feed() {
             No predictions found
           </div>
         ) : (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "16px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "16px" }}>
             {filtered.map(p => {
               const theme = getTheme(p.question, p.category);
               const dl = daysLeft(p.resolution_date);
