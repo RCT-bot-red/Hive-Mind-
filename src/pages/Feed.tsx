@@ -118,8 +118,8 @@ export default function Feed() {
     <div style={{ backgroundColor: "#070e1a", minHeight: "100vh", width: "100%" }}>
 
       {/* TOP BANNER */}
-      <div style={{ background: "linear-gradient(180deg, #0a1628 0%, #070e1a 100%)", borderBottom: "1px solid #0f2040", padding: "28px 40px 24px" }}>
-        <div style={{ maxWidth: "1600px", margin: "0 auto", width: "100%" }}>
+      <div style={{ background: "linear-gradient(180deg, #0a1628 0%, #070e1a 100%)", borderBottom: "1px solid #0f2040", padding: "28px 48px 24px" }}>
+        <div style={{ width: "100%" }}>
 
           {/* Title row */}
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px", flexWrap: "wrap", gap: "16px" }}>
@@ -186,7 +186,7 @@ export default function Feed() {
       </div>
 
       {/* GRID */}
-      <div style={{ maxWidth: "1600px", margin: "0 auto", padding: "28px 40px 80px", width: "100%" }}>
+      <div style={{ padding: "28px 40px 80px", width: "100%", boxSizing: "border-box" as const }}>
         {loading ? (
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "16px" }}>
             {[...Array(6)].map((_, i) => (
