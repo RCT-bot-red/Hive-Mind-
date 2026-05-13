@@ -262,13 +262,16 @@ export default function Feed() {
       <div style={{ maxWidth: "1100px", margin: "0 auto" }}>
 
         {/* Header */}
-        <div style={{ marginBottom: "28px", display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: "12px" }}>
-          <div>
-            <h1 style={{ fontSize: "32px", fontWeight: 900, marginBottom: "4px", letterSpacing: "-0.5px" }}>Predictions Feed</h1>
-            <p style={{ color: "#6b7f99", fontSize: "14px", margin: 0 }}>
-              <span style={{ color: "#00B4D8", fontWeight: 700 }}>{filtered.length}</span> active predictions — vote to influence the community probability
-            </p>
+        <div style={{ marginBottom: "32px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "6px" }}>
+            <h1 style={{ fontSize: "32px", fontWeight: 900, margin: 0, letterSpacing: "-0.5px", background: "linear-gradient(135deg, #ffffff, #8899aa)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Predictions Feed</h1>
+            <div style={{ background: "#00ff8815", border: "1px solid #00ff8840", color: "#00ff88", padding: "4px 12px", borderRadius: "20px", fontSize: "11px", fontWeight: 700, letterSpacing: "1px" }}>
+              LIVE
+            </div>
           </div>
+          <p style={{ color: "#6b7f99", fontSize: "14px", margin: 0 }}>
+            <span style={{ color: "#00B4D8", fontWeight: 700 }}>{filtered.length}</span> active predictions — click any to vote
+          </p>
         </div>
 
         {/* Search bar */}
@@ -342,21 +345,32 @@ export default function Feed() {
 
               return (
                 <div key={p.id} onClick={() => navigate(`/market/${p.id}`)}
-                  style={{ cursor: "pointer", background: "#0d1f35", border: `1px solid #1a3050`, borderRadius: "18px", overflow: "hidden", transition: "all 0.2s ease" }}
-                  onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-3px)"; e.currentTarget.style.borderColor = theme.color + "50"; e.currentTarget.style.boxShadow = `0 12px 40px ${theme.color}15`; }}
-                  onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.borderColor = "#1a3050"; e.currentTarget.style.boxShadow = "none"; }}>
+                  style={{ cursor: "pointer", background: "linear-gradient(160deg, #0d1f35 0%, #0a1a2e 100%)", border: "1px solid #1a3050", borderRadius: "18px", overflow: "hidden", transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)", position: "relative" }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.transform = "translateY(-6px) scale(1.01)";
+                    e.currentTarget.style.borderColor = "#00ff8860";
+                    e.currentTarget.style.boxShadow = "0 0 0 1px #00ff8825, 0 8px 24px #00ff8820, 0 24px 64px #00B4D812";
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.transform = "translateY(0) scale(1)";
+                    e.currentTarget.style.borderColor = "#1a3050";
+                    e.currentTarget.style.boxShadow = "none";
+                  }}>
 
                   {/* Header — image if available, else colored icon */}
                   {p.image_url ? (
-                    <div style={{ position: "relative", height: "140px", overflow: "hidden" }}>
-                      <img src={p.image_url} alt={p.category} style={{ width: "100%", height: "100%", objectFit: "cover" }}/>
-                      <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, transparent 30%, #0d1f35 100%)" }}/>
-                      <div style={{ position: "absolute", top: "12px", left: "12px", background: `${theme.color}90`, border: `1px solid ${theme.color}`, backdropFilter: "blur(4px)", color: "#fff", padding: "3px 10px", borderRadius: "20px", fontSize: "10px", fontWeight: 700 }}>
+                    <div style={{ position: "relative", height: "160px", overflow: "hidden" }}>
+                      <img src={p.image_url} alt={p.category} style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.4s ease" }}
+                        onMouseEnter={e => (e.currentTarget.style.transform = "scale(1.05)")}
+                        onMouseLeave={e => (e.currentTarget.style.transform = "scale(1)")}
+                      />
+                      <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(0,0,0,0.1) 0%, #0d1f35 100%)" }}/>
+                      <div style={{ position: "absolute", top: "12px", left: "12px", background: "rgba(0,0,0,0.6)", backdropFilter: "blur(8px)", color: theme.color, padding: "3px 10px", borderRadius: "20px", fontSize: "10px", fontWeight: 700, border: `1px solid ${theme.color}40` }}>
                         {p.category}
                       </div>
-                      <div style={{ position: "absolute", bottom: "12px", right: "12px", textAlign: "right" }}>
-                        <div style={{ fontSize: "38px", fontWeight: 900, lineHeight: 1, color: confColor, textShadow: "0 2px 8px rgba(0,0,0,0.8)" }}>{p.confidence}%</div>
-                        <div style={{ fontSize: "10px", color: "rgba(255,255,255,0.7)", fontWeight: 600, letterSpacing: "1px" }}>YES PROB</div>
+                      <div style={{ position: "absolute", bottom: "14px", right: "14px", textAlign: "right" }}>
+                        <div style={{ fontSize: "40px", fontWeight: 900, lineHeight: 1, color: confColor, textShadow: `0 0 20px ${confColor}60, 0 2px 8px rgba(0,0,0,0.9)` }}>{p.confidence}%</div>
+                        <div style={{ fontSize: "10px", color: "rgba(255,255,255,0.6)", fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase" }}>YES PROB</div>
                       </div>
                     </div>
                   ) : (
